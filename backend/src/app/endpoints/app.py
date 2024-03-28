@@ -8,16 +8,15 @@ import requests
 from typing import Annotated
 
 import pandas as pd
-from botocore.client import BaseClient
+
 from fastapi import FastAPI, APIRouter, HTTPException, Query, Response, status, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 from datetime import datetime
 
-from starlette.responses import HTMLResponse
 
-from ..config import YDB_DATABASE, LAYER
+from ..config import YDB_DATABASE
 from ..adapters.repository import Repository
 from ..core import str_from_date
 from ..domain import model
@@ -473,10 +472,8 @@ def get_user_events(request: Request, response: Response, body: model.TicketRequ
 @router.post("/api/events/xlsx")
 def create_events(request: Request, file: UploadFile = File(...)):
     repository: Repository = request.app.repository
-    s3: BaseClient = request.app.s3
     with open(file.filename, 'wb') as f:
         shutil.copyfileobj(file.file, f)
-    s3.upload_file(file.filename, LAYER, f'events/{file.filename}')
     events, slots = get_data(file.filename)
     repository.save_events(events, slots)
 

@@ -34,6 +34,7 @@ const Ticket = ({ event, slot, ticket }) => {
           <p className="ticket__seats">
             {`${adult} ${pluralize(adult, 'взрослый', 'взрослых', 'взрослых')}`}, {`${child} ${pluralize(child, 'ребенок', 'детей', 'детей')}`}
           </p>
+          <p class="ticket__location">НЕОБХОДИМА СМЕННАЯ ОБУВЬ</p>
           <p className="ticket__info">
             Для того, чтобы пройти на мероприятие — назовите номер билета
           </p>

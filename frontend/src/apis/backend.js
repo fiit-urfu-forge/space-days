@@ -23,6 +23,34 @@ export async function getEvent(id) {
     }
 }
 
+export async function deleteEvent(id) {
+
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/events/?event_id=${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
 export async function getEventsByDays(days) {
     if (API_BASE_URL) {
         const daysQuery = days.map(d => `days=${d}`).join('&');
@@ -182,6 +210,119 @@ export async function deletePartner(id) {
 
         const response = await fetch(`${API_BASE_URL}/partners?partner_id=${id}`, {
             method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function getUsers() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            console.log("HTTP error: " + response.status);
+            return null;
+        }
+    } else {
+        return delay(1000).then(() => samplePartners);
+    }
+}
+
+export async function deleteAdmin(id) {
+
+    if (API_BASE_URL) {
+
+        const response = await fetch(`${API_BASE_URL}/admin?email=${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function addAdmin(form) {
+
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function transferAdmin(form) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin/owner`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
         });
 
         if (response.ok || response.status === 409 || response.status === 422) {

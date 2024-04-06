@@ -21,7 +21,7 @@ const STATUS_REGISTRATION_LOADED = 3;
 
 export const RegistrationPage = () => {
   const { status, event, slot, setStatus } = useEventLoading();
-  const [ticket, setTicket] = useState(null);
+  const [ticket, setTicket] = useState();
   const [form, handleFormChange] = useForm();
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -29,10 +29,11 @@ export const RegistrationPage = () => {
     setStatus(STATUS_REGISTRATION_LOADING);
     const result = await subscribeEvent(slot.slot_id, form);
     if (result.ok) {
-      const ticket = result.body;
+      const tt = result.body;
+      saveTicket(tt);
       setErrorMessage(null);
       setStatus(STATUS_REGISTRATION_LOADED);
-      setTicket(ticket);
+      setTicket(tt);
       saveRegistrationForm(form);
       return;
     }
@@ -96,6 +97,8 @@ export const RegistrationPage = () => {
         handleRegister
       );
     case STATUS_REGISTRATION_LOADED:
+      const ticketString = window.localStorage.getItem("ticket");
+      const ticket = ticketString ? JSON.parse(ticketString) : null;
       return renderTicket(event, slot, ticket);
     default:
       return renderError();
@@ -270,6 +273,10 @@ function useForm() {
   }, []);
 
   return [form, handleFormChange];
+}
+
+function saveTicket(ticket) {
+  window.localStorage.setItem("ticket", JSON.stringify(ticket));
 }
 
 function saveRegistrationForm(form) {

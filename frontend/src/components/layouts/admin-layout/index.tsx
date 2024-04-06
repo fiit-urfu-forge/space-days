@@ -1,10 +1,34 @@
 import classnames from "classnames";
 import styles from "./styles.module.css";
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { ProtectedRoutes } from "components/ProtectedRoures";
+import { getUsers } from "apis/backend";
+import Cookies from 'js-cookie';
 
+type usersListType = {
+  email: string,
+  is_owner: boolean,
+}
 
 export const AdminLayout = () => {
   const location = useLocation();
+  let isOwner = false;
+  const [usersList, setUsersList] = useState<usersListType[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const usersList = await getUsers();
+      setUsersList(usersList);
+
+    }
+
+    fetchData();
+  }, []);
+
+  const currentUser = Cookies.get("email");
+  if (usersList !== undefined) {
+    isOwner = usersList.find(user => user?.email === currentUser)?.is_owner ?? false;
+  }
 
   return (
     <>
@@ -32,7 +56,7 @@ M12.8716 7.97693V10.5923" stroke="#81848D" strokeLinecap="round" strokeWidth="1.
           </svg>
           <span className={styles.linkTitle}>Выгрузка</span>
         </Link>
-        <Link to="admin/users" className={classnames(styles.link, { [styles.currentPath]: location.pathname === "/admin" })}>
+        {isOwner && <Link to="admin/users" className={classnames(styles.link, { [styles.currentPath]: location.pathname === "/admin" })}>
           <svg
             width="21"
             height="19"
@@ -52,10 +76,10 @@ M12.8716 7.97693V10.5923" stroke="#81848D" strokeLinecap="round" strokeWidth="1.
             />
           </svg>
           <span className={styles.linkTitle}>Администраторы</span>
-        </Link>
+        </Link>}
         <hr className={styles.hr} />
 
-        <Link
+        {/*<Link
           to="admin"
           className={classnames(styles.link, styles.logoutIcon)}
         >
@@ -77,10 +101,10 @@ M12.8716 7.97693V10.5923" stroke="#81848D" strokeLinecap="round" strokeWidth="1.
           </svg>
 
           <span className={styles.linkTitle}>Выйти</span>
-        </Link>
+  </Link>*/}
       </div >
       <main className={styles.main}>
-        <Outlet />
+        <ProtectedRoutes />
       </main>
     </>
   );

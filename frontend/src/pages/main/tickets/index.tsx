@@ -79,7 +79,7 @@ export const TicketsPage = () => {
   }
   return (
     <Container
-      style={{ display: "flex", flexDirection: "column", height: "100vh" }}
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
     >
       <Row>
         <Col className="rules">

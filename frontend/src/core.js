@@ -18,10 +18,13 @@ export function formatTicketId(ticketId) {
 }
 
 export function convertDate(dayOfMonth) {
-  return `${padTime(dayOfMonth)}.04.2023`;
+  return `${padTime(dayOfMonth)}.04.2024`;
 }
 
 export function convertTime(time) {
-  const t = time.split("+")[0];
+  let t = time.split("+")[0];
+  if (t[t.length - 1] === "Z") {
+    t = t.slice(0, t.length - 1);
+  }
   return new Date(t);
 }

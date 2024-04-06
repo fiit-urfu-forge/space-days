@@ -26,14 +26,6 @@
     color: #fff;
   }
   
-  
-  
-  
-  
-  
-  
-  
-  
   .banner {
     padding: 60px;
     justify-content: space-between;
@@ -75,4 +67,25 @@
 
   .mainButton {
     font-weight: 700;
+  }
+
+  .yearRow {
+    margin-inline-start: 50px;
+    margin-block-start: 30px;
+    height: 72px;
+  }
+
+  .yearButton {
+    color: #95b0fa;
+    font-weight: 400 !important;
+    border-color: #95b0fa;
+    margin-inline-end: 20px;
+  }
+
+  .selectedYear {
+    padding: 12px 20px;
+    font-size: 28px;
+    font-weight: 700 !important;
+    color: #5e7fd6;
+    border-color: #5e7fd6;
   }

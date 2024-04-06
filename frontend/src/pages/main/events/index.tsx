@@ -20,14 +20,10 @@ const STATUS_ERROR = -1;
 const STATUS_LOADED = 1;
 
 const dayMap = {
-  8: "8 апреля, суббота",
-  9: "9 апреля, воскресенье",
-  10: "10 апреля, понедельник",
-  11: "11 апреля, вторник",
-  12: "12 апреля, среда",
-  13: "13 апреля, четверг",
-  14: "14 апреля, пятница",
-  15: "15 апреля, суббота",
+  13: "13 апреля, суббота",
+  15: "15 апреля, понедельник",
+  17: "17 апреля, среда",
+  19: "19 апреля, пятница",
 };
 
 export const EventsPage = () => {
@@ -121,11 +117,12 @@ function renderLoaded(content, handleRegister) {
             </p>
           </div>
         </Col>
-      </Row>
-      {day === 8 && renderTimeMenu(day, hour)}
+      </Row >
+      {day === 8 && renderTimeMenu(day, hour)
+      }
       <Row className="events-row justify-content-between">
         <EventList events={events} onRegister={handleRegister} />
-        {day === 15 && (
+        {/*day === 15 && (
           <Col className="event-card present-15" as={"article"}>
             <div className="img-wrapper">
               <Image fluid rounded src={require("shared/image/present_logo.png")}></Image>
@@ -165,14 +162,14 @@ function renderLoaded(content, handleRegister) {
               Вход свободный
             </Button>
           </Col>
-        )}
+        )*/}
       </Row>
     </>
   );
 }
 
 function renderDayMenu(day) {
-  const days = [8, 9, 10, 11, 12, 13, 14, 15];
+  const days = [13, 15, 17, 19];
   const result = days.map((it, index) => {
     const className = `date-button rounded-pill ${it === day ? "date-button_checked" : ""
       }`;
@@ -238,9 +235,9 @@ function useLoading() {
 
       const now = new Date(Date.now());
       const defaultDay =
-        new Date(2023, 4 - 1, 8) <= now && now < new Date(2023, 4 - 1, 15 + 1)
+        new Date(2024, 4 - 1, 8) <= now && now < new Date(2024, 4 - 1, 15 + 1)
           ? now.getDate()
-          : 8;
+          : 13;
 
       const hour = hourParameter ? parseInt(hourParameter, 10) : null;
       const day = hour

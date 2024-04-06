@@ -8,7 +8,7 @@ import classnames from "classnames";
 import { useLoaderData, useNavigation } from "react-router-dom";
 import { EditButton } from "components/buttons/edit-button";
 import { DeleteButton } from "components/buttons/delete-button";
-import { getEvents } from "apis/backend";
+import { getEvents, deleteEvent } from "apis/backend";
 import { AdminLoader } from "components/loaders/admin-loader";
 import { LoadEventsModal } from "./load-events";
 import "commonStyles.css"
@@ -33,7 +33,21 @@ export const AdminEventsPage = () => {
         }
 
         fetchData();
-    }, []);
+    }, [loadModalActive]);
+
+    const handleDelete = async (element_id) => {
+        const result = await deleteEvent(element_id);
+        if (result.ok) {
+
+            const fetchData = async () => {
+                const eventsList = await getEvents();
+                setEventsList(eventsList);
+            }
+
+            fetchData();
+            ;
+        };
+    };
 
     const eventsListComponent = <div className={styles.table}>
         <div className={classnames(styles.row, styles.titles)}>
@@ -44,7 +58,7 @@ export const AdminEventsPage = () => {
             <h3>Возраст</h3>
             <h3>Продол-ть</h3>
         </div>
-        {eventsList.map(event => {
+        {eventsList && eventsList.map(event => {
             let imgSrc;
             try {
                 imgSrc = require(`shared/image/partners/${event.id_partner}.png`);
@@ -61,12 +75,11 @@ export const AdminEventsPage = () => {
                     <span>{event.age}</span>
                     <span>{event.duration}</span>
                     <div className={styles.buttons}>
+                        <DeleteButton element_id={event.event_id} updateList={setEventsList} list={eventsList} deleteHandle={handleDelete} />
                     </div>
                 </div>)
         })}
     </div>
-
-    useEffect(() => { console.log(file) }, [file])
 
     return (
         <>

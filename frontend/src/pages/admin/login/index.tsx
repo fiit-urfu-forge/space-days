@@ -1,19 +1,8 @@
 // @ts-nocheck
-import Button from "react-bootstrap/Button";
-import Image from "react-bootstrap/Image";
-import styles from "./styles.module.css";
-import React from "react";
-import { useEffect, useState } from "react";
-import classnames from "classnames";
-import { getEvents } from "apis/backend";
 import "commonStyles.css"
-import { AddEventForm } from "./add-event";
 import { API_BASE_URL } from "../../../constants";
 
 export const LogInPage = () => {
-    const [modalActive, setModalActive] = useState(false);
-    const [eventsList, setEventsList] = useState([]);
-
     const widget = () => {
         const fetchData = async () => {
             window.YaAuthSuggest.init({

@@ -5,26 +5,16 @@ import { getPartners } from "apis/backend";
 import classnames from "classnames";
 
 type TDeleteButtonProps = {
-    className: string,
+    className?: string,
     element_id: string,
     updateList: any,
+    list: Array<any>,
+    deleteHandle: any,
 }
 
-export const DeleteButton = ({ className, element_id, updateList }: TDeleteButtonProps) => {
-    const handleDelete = async () => {
-        const result = await deletePartner(element_id);
-        if (result.ok) {
+export const DeleteButton = ({ className, element_id, updateList, list, deleteHandle }: TDeleteButtonProps) => {
 
-            const fetchData = async () => {
-                const partnersList = await getPartners();
-                updateList(partnersList);
-            }
-
-            fetchData();
-            ;
-        };
-    };
-    return <Button className={classnames(styles.deleteButton, className)} onClick={handleDelete} variant="outline-primary">
+    return <Button className={classnames(styles.deleteButton, className)} onClick={() => deleteHandle(element_id, updateList)} variant="outline-primary">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             width="15"

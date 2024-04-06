@@ -19,6 +19,14 @@ import { partnersLoader } from "./admin/partners";
 const routesConfig = [
   { path: "*", element: <NotFound /> },
   {
+    path: "/admin/",
+    element: <LogInPage />,
+  },
+  {
+    path: "/token/*",
+    element: <LogInSuppPage />,
+  },
+  {
     element: <AdminLayout />,
     children: [
       {
@@ -27,20 +35,12 @@ const routesConfig = [
         loader: eventsLoader,
       },
       {
-        path: "/admin/",
-        element: <LogInPage />,
-      },
-      {
         path: "/admin/users",
         element: <AdminUsersPage />,
       },
       {
         path: "/admin/export",
         element: <ExportPage />,
-      },
-      {
-        path: "/token/*",
-        element: <LogInSuppPage />,
       },
       {
         path: "/admin/partners",

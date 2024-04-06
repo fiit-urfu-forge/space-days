@@ -1,22 +1,15 @@
 // @ts-nocheck
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
-import Carousel from "components/Carousel";
-import InfoList from "components/InfoInNumbers/InfoList";
-import info from "components/InfoInNumbers/infoObj";
-import PartnerCarousel from "components/PartnerCarousel";
-import { LinkContainer } from "react-router-bootstrap";
-import { Link } from "react-router-dom";
 import styles from "./styles.module.css";
 import React from "react";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
-import { getPartners } from "apis/backend";
+import { getPartners, deletePartner } from "apis/backend";
 import { PartnerForm } from "./partnerForm";
 import { EditButton } from "components/buttons/edit-button";
 import { DeleteButton } from "components/buttons/delete-button";
 import { useLoaderData, useNavigation } from "react-router-dom";
-import { AdminLayout } from "components/layouts/admin-layout";
 import { BASE_URL } from "constants";
 import { AdminLoader } from "components/loaders/admin-loader";
 
@@ -27,6 +20,19 @@ export const partnersLoader = async () => {
 
 export const PartnersPage = () => {
   const navigation = useNavigation();
+  const handleDelete = async (element_id) => {
+    const result = await deletePartner(element_id);
+    if (result.ok) {
+
+      const fetchData = async () => {
+        const partnersList = await getPartners();
+        setPartnersList(partnersList);
+      }
+
+      fetchData();
+      ;
+    };
+  };
 
   const [modalActive, setModalActive] = useState(false);
   const [editModalActive, setEditModalActive] = useState(false);
@@ -76,7 +82,7 @@ export const PartnersPage = () => {
               setEditModalActive(true);
               setPartner(partner);
             }} />
-            <DeleteButton element_id={partner.partner_id} updateList={setPartnersList} />
+            <DeleteButton element_id={partner.partner_id} deleteHandle={handleDelete} list={partnersList} updateList={setPartnersList} />
           </div>
         </div>)
     })}

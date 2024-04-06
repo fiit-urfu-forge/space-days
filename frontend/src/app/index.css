@@ -789,11 +789,6 @@ span.event-card__title {
   margin-bottom: 60px;
 }
 
-.ticket {
-  height: 100vh;
-  margin: auto;
-}
-
 .ticket__title {
   font-size: 70px;
   font-weight: 700;

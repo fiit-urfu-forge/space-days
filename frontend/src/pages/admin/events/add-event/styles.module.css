@@ -1,47 +1,178 @@
 .addEventForm {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 100px;
-    position: relative;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 1000px auto;
+  grid-template-rows: auto auto;
+  gap: 30px;
+  position: relative;
+  width: 100%;
 }
 
 .formBlock {
-    border: 2px solid #DADADA;
-    border-radius: 10px;
-    padding: 25px;
+  border: 2px solid #dadada;
+  width: 100%;
+  border-radius: 10px;
+  padding: 25px;
+}
+
+.formBlock > h3 {
+  font-size: 20px;
 }
 
 .saveButton {
-    position: absolute;
-    top: -70px;
-    right: 0;
-}
-
-.information {
-    width: 1000px;
+  position: absolute;
+  top: -70px;
+  right: 0;
+  margin-block-end: 55px;
+  font-size: 13px;
+  padding: 15px 30px;
+  border-width: 2px;
+  border-radius: 7px;
 }
 
 .partners {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
+    height: 468px;
+    overflow-y: scroll;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  grid-auto-rows: 170px;
+  padding: 3px 20px 3px 3px;
 }
 
 .input {
-    display: flex;
-    flex-direction: column;
-    font-size: 11px;
-    color: #81848D;
-    font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  color: #81848d;
+  font-weight: 600;
+  margin-block-end: 20px;
+}
+
+.input:last-child {
+  margin-block-end: 0;
+}
+
+.inputRaw {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkbox {
+  width: 40px;
 }
 
 .inputArea {
-    margin-block-start: 5px;
-    height: 40px;
-    border: 1px solid #DADADA;
-    border-radius: 3px;
-    font-size: 13px;
-    padding: 13px 10px;
+  margin-block-start: 5px;
+  height: 40px;
+  border: 1px solid #dadada;
+  border-radius: 3px;
+  font-size: 13px;
+  padding: 13px 10px;
+}
+
+.textArea {
+  height: 100px;
+}
+
+.textArea::-webkit-scrollbar,
+.partners::-webkit-scrollbar,
+.table::-webkit-scrollbar {
+  width: 15px;
+}
+
+.textArea::-webkit-scrollbar-track,
+.partners::-webkit-scrollbar-track,
+.table:-webkit-scrollbar-track {
+  /* цвет плашки */
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px 10px #cfcfcf;
+  border: solid 5px transparent;
+  /* закругления плашки */
+}
+
+.textArea::-webkit-scrollbar-thumb,
+.partners::-webkit-scrollbar-thumb,
+.table::-webkit-scrollbar-thumb {
+  /* цвет плашки */
+  border-radius: 10px;
+  /* закругления плашки */
+  box-shadow: inset 0 0 10px 10px #81848d;
+  border: solid 5px transparent;
+}
+
+.radioImg + img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.radioImg:checked + img {
+    outline: #81848d 2px solid;
+}
+
+.table {
+  display: grid;
+  grid-auto-rows: 110px;
+  overflow: hidden;
+  border-top: none;
+  height: 244px;
+  width: 515px;
+  overflow-y: scroll;
+}
+
+.buttons {
+  position: absolute;
+}
+
+.row {
+  display: grid;
+  position: relative;
+  background-color: white;
+  grid-template-columns: 1fr 1fr 1fr;
+  border: 1px solid #DADADA;
+  border-top: none;
+}
+
+.row:last-child {
+  border-radius: 0 0 7px 7px;
+}
+
+.row > span {
+  padding-inline-start: 15px;
+  padding-block-start: 15px;
+  
+}
+
+
+.titles {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  background-color: #F8FAFF;
+  height: 45px;
+  border-radius: 7px 7px 0 0;
+  border: 1px solid #DADADA;
+}
+
+.titles > h3 {
+  display: flex;
+  width: calc(100% / 3);
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  margin-inline-start: 15px;
+  margin-block-end: 0;
+}
+
+.slotsBlock {
+  display: flex;
+  gap: 0 30px;
+  flex-wrap: wrap;
+}
+
+.slotsBlock > h3 {
+  width: 100%;
+  font-size: 20px;
 }

@@ -89,3 +89,9 @@
     color: #5e7fd6;
     border-color: #5e7fd6;
   }
+
+@media screen and (max-width: 480px) {
+  .banner {
+    padding: 10px;
+  }  
+}

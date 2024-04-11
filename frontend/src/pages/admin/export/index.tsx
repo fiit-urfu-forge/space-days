@@ -5,28 +5,22 @@ import styles from "./styles.module.css";
 import React from "react";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
-import { getEvents } from "apis/backend";
+import { getExportFile } from "apis/backend";
 import "commonStyles.css"
 import { AddEventForm } from "./add-event";
 
 export const ExportPage = () => {
-    const [modalActive, setModalActive] = useState(false);
-    const [eventsList, setEventsList] = useState([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const eventsList = await getEvents();
-            setEventsList(eventsList);
-        }
-
-        fetchData();
-    }, []);
-
-
     return (
         <>
-            <h1>Выгрузка</h1>
+            <h1>Выгрузка по всем мероприятиям</h1>
             <hr className={styles.hr} />
-            <p>В разработке</p>
+            <Button
+                className={classnames("outline-primary", styles.addButton)}
+                variant="outline-primary"
+                onClick={() => getExportFile()}
+            >
+                Скачать файл
+            </Button>
         </>
     )
 };

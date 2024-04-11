@@ -10,7 +10,6 @@ const useAuth = () => {
 export const ProtectedRoutes = () => {
     const location = useLocation();
     const isAuth = true;
-    console.log(isAuth);
     return isAuth ? (
         <Outlet />
     ) : (

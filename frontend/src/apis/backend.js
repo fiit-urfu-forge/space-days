@@ -23,6 +23,23 @@ export async function getEvent(id) {
     }
 }
 
+export async function getExportFile() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/export/all`, {
+            method: "GET",
+        }).then(res => res.blob()).then(blob => {
+            const url = window.URL.createObjectURL(new Blob([blob]),);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download",
+                "spaceDaysExport.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        });
+    }
+}
+
 export async function deleteEvent(id) {
 
     if (API_BASE_URL) {

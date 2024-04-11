@@ -235,7 +235,7 @@ function useLoading() {
 
       const now = new Date(Date.now());
       const defaultDay =
-        new Date(2024, 4 - 1, 8) <= now && now < new Date(2024, 4 - 1, 15 + 1)
+        new Date(2024, 4 - 1, 13) === now || new Date(2024, 4 - 1, 15) === now || new Date(2024, 4 - 1, 17) === now || new Date(2024, 4 - 1, 19) === now
           ? now.getDate()
           : 13;
 

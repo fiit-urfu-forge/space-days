@@ -4,6 +4,7 @@ import logging
 import math
 import uuid
 import requests
+import pytz
 
 from typing import Annotated
 
@@ -11,6 +12,7 @@ import pandas as pd
 
 from fastapi import FastAPI, APIRouter, HTTPException, Query, Response, status, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 import uvicorn
 from datetime import datetime
@@ -104,7 +106,7 @@ SELECT
     email
 FROM AS_TABLE($userData);
 
-INSERT INTO child
+INSERT INTO childs
 SELECT
     child_id,
     user_id,
@@ -113,7 +115,7 @@ SELECT
     age
 FROM AS_TABLE($childData);
 
-INSERT INTO ticket
+INSERT INTO tickets
 SELECT
     ticket_id,
     user_id,
@@ -139,10 +141,10 @@ SOME(location) AS location,
 SOME(events.age) AS age,
 SOME(duration) AS duration,
 
-COUNT(child_id) AS childs
+COUNT(child_id) AS child
 
 
-FROM ticket VIEW user_slot_index AS ticket_x
+FROM tickets VIEW user_slot_index AS ticket_x
 INNER JOIN slots ON slots.slot_id = ticket_x.slot_id
 INNER JOIN events ON events.event_id = slots.event_id
 LEFT JOIN childs VIEW user_slot_index AS child_x ON child_x.slot_id = ticket_x.slot_id AND child_x.user_id = ticket_x.user_id
@@ -178,6 +180,7 @@ def get_data(filename: str) -> tuple[list[model.Event], list[model.Slot]]:
             id_partner=row['ID партнера'],
             is_children=row['Только для детей'] == 'да'
         )
+
         slots_1 = [model.Slot(event_id=row['id'], slot_id=slot_counter,
                         start_time=timestamp_to_str(row['Время начала']), amount=row['количество людей в определенный слот'])]
         slot_counter += 1
@@ -203,7 +206,7 @@ def get_data(filename: str) -> tuple[list[model.Event], list[model.Slot]]:
 
 @router.get("/api/test")
 def test():
-    return "Hello, world"
+    return "Hello, senya"
 
 
 @router.post("/api/emails/subscribe", status_code=status.HTTP_201_CREATED)
@@ -302,7 +305,7 @@ def get_events(request: Request, id: int | None = None, days: list[int] | None =
         event.slots.append(model.SlotRequest(
             slot_id=row.slot_id,
             amount=row.amount,
-            start_time=row.start_time,
+            start_time=datetime.utcfromtimestamp(row.start_time).replace(tzinfo=pytz.utc),
             available_users=row.available_ticket))
 
     result.append(event)
@@ -409,7 +412,7 @@ def add_user(request: Request, user_request: model.UserRequest, response: Respon
                        })
     logger.info("Success subscription")
 
-    repository.save_new_mailing(model.SendingLog(
+    repository.save_new_mailing(model.Mailing(
         mailing_id=str(uuid.uuid4()),
         child_count=len(childs),
         adult_count=ticket.amount - len(childs),
@@ -475,42 +478,71 @@ def create_events(request: Request, file: UploadFile = File(...)):
     with open(file.filename, 'wb') as f:
         shutil.copyfileobj(file.file, f)
     events, slots = get_data(file.filename)
+    repository.delete_database()
     repository.save_events(events, slots)
 
 
-@router.get("/api/slots/", response_model=list[model.Slot])
-def get_slots(request: Request, event_id: int | None = None):
-    pass
+@router.get("/api/export/all")
+def get_all_events(request: Request):
+    repository: Repository = request.app.repository
+    data = repository.get_data()
+    df = pd.DataFrame([info.model_dump() for info in data])
+    dic = {"email": "Email", "f_name": "Имя", "l_name": "Фамилия", "phone": "Телефон",
+           "name": "Имя ребенка", "age": "Возраст ребенка", "start_time": "Время начала мероприятия",
+           "title": "Название мероприятия", "is_come": "Билет проверен"}
+    df['start_time'] = df['start_time'].dt.tz_localize(None)
+    df.rename(columns=dic, inplace=True)
+
+    with pd.ExcelWriter('tbl.xlsx', engine='xlsxwriter') as wb:
+        df.to_excel(wb, sheet_name='Sheet1', index=False)
+        worksheet = wb.sheets["Sheet1"]
+        worksheet.set_column("A:I", 20)
+        worksheet.set_column("E:E", 15)
+        worksheet.set_column("F:F", 17)
+        worksheet.set_column("H:H", 30)
+        worksheet.set_column("I:I", 16)
+        worksheet.set_column("G:G", 28)
+
+    return FileResponse(path='tbl.xlsx', filename='Выгрузка.xlsx', media_type='multipart/form-data')
 
 
 @router.post("/api/slots/", response_model=model.Slot)
-def create_slots(request: Request, body: model.Slot):
-    pass
+def create_slot(request: Request, body: model.RequestSlot):
+    repository: Repository = request.app.repository
+    slot_id = repository.get_max_slot_id() + 1
+    slot = model.Slot(
+        slot_id=slot_id,
+        event_id=body.event_id,
+        start_time=body.start_time,
+        amount=body.amount,
+    )
+    repository.save_slot(slot)
+    return slot
 
 
-@router.put("/api/slots/", response_model=model.Slot)
-def update_slots(request: Request, slot_id: int, body: model.Slot):
-    pass
+@router.put("/api/slots/")
+def update_slot(request: Request, body: model.Slot):
+    repository: Repository = request.app.repository
+    repository.upsert_slot(body)
 
 
 @router.delete("/api/slots/")
-def delete_slots(request: Request, slot_id: int):
-    pass
-
-
-@router.post("/api/events/", response_model=model.Event)
-def create_events(request: Request, body: model.Event):
-    pass
+def delete_slot(request: Request, slot_id: int):
+    repository: Repository = request.app.repository
+    repository.delete_slot(slot_id)
 
 
 @router.put("/api/events/", response_model=model.Event)
-def update_events(request: Request, event_id: int, body: model.Event):
-    pass
+def update_events(request: Request, body: model.Event):
+    repository: Repository = request.app.repository
+    repository.update_events(body)
+    return body
 
 
 @router.delete("/api/events/")
 def delete_events(request: Request, event_id: int):
-    pass
+    repository: Repository = request.app.repository
+    repository.delete_events(event_id)
 
 
 @router.get("/api/partners/", response_model=list[model.Partner])
@@ -552,8 +584,21 @@ def get_admin(request: Request) -> list[model.Admin]:
     return repository.list_admin()
 
 
+@router.delete("/api/admin/")
+def delete_admin(request: Request, email: str):
+    repository: Repository = request.app.repository
+    repository.delete_admin(email)
+
+
+@router.post("/api/admin/owner")
+def transfer_owner(request: Request, body: model.TransferOwnerRequest):
+    repository: Repository = request.app.repository
+    repository.transfer_owner([model.Admin(email=body.email_from, is_owner=False),
+                               model.Admin(email=body.email_to, is_owner=True)])
+
+
 @router.get("/api/authorize/")
-def authorize(request: Request, token: str):
+def authorize(request: Request, resp: Response, token: str):
     repository: Repository = request.app.repository
     headers = {"Authorization": f"OAuth {token}"}
     response = requests.get("https://login.yandex.ru/info", headers=headers)
@@ -563,6 +608,9 @@ def authorize(request: Request, token: str):
     admins = repository.get_admin_by_email(email)
     if len(admins) == 0:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="user unauthorized")
+    if admins[0][1] is True:
+        resp.set_cookie("is_owner", "1")
+    resp.set_cookie("email", admins[0][0])
 
 
 def main():

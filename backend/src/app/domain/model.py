@@ -7,6 +7,17 @@ class Email(BaseModel):
     email: str
 
 
+class RequestEvent(BaseModel):
+    description: str
+    summary: str
+    title: str
+    location: str
+    age: str
+    duration: str
+    id_partner: str
+    is_children: bool
+
+
 class Event(BaseModel):
     event_id: int
     description: str
@@ -17,6 +28,17 @@ class Event(BaseModel):
     duration: str
     id_partner: str
     is_children: bool
+
+
+class RequestSlot(BaseModel):
+    event_id: int
+    start_time: str
+    amount: int
+
+
+class RequestUpdateSlot(BaseModel):
+    start_time: str
+    amount: int
 
 
 class Slot(BaseModel):
@@ -174,3 +196,20 @@ class PartnerRequest(BaseModel):
 class Admin(BaseModel):
     email: str
     is_owner: bool
+
+
+class TransferOwnerRequest(BaseModel):
+    email_from: str
+    email_to: str
+
+
+class InfoEvent(BaseModel):
+    email: str
+    f_name: str
+    l_name: str
+    phone: str
+    name: str | None = None
+    age: int | None = None
+    start_time: datetime
+    title: str
+    is_come: bool | None

@@ -53,18 +53,16 @@ def send_email(
     data = {
         "to": mailing.email,
         "payment": "credit_priority",
-        "params": {
-            "first_name": mailing.first_name,
-            "last_name": mailing.last_name,
-            "ticket": make_beautiful_ticket(mailing.ticket_id),
-            "event": mailing.title,
-            "date": start_time.strftime("%d.%m.%Y"),
-            "time": start_time.strftime("%H:%M"),
-            "duration": f"{mailing.duration} {get_noun(int(mailing.duration), 'минута', 'минуты', 'минут')}",
-            "address": mailing.location,
-            "adult_count": mailing.adult_count,
-            "child_count": mailing.child_count,
-        }
+        "params[first_name]": mailing.first_name,
+        "params[last_name]": mailing.last_name,
+        "params[ticket]": make_beautiful_ticket(mailing.ticket_id),
+        "params[event]": mailing.title,
+        "params[date]": start_time.strftime("%d.%m.%Y"),
+        "params[time]": start_time.strftime("%H:%M"),
+        "params[duration]": f"{mailing.duration} {get_noun(int(mailing.duration), 'минута', 'минуты', 'минут')}",
+        "params[address]": mailing.location,
+        "params[adult_count]": mailing.adult_count,
+        "params[child_count]": mailing.child_count,
     }
     logger.info(f"Send email to {mailing.email}, data {data}, headers {headers}")
     resp = requests.post('https://api.notisend.ru/v1/email/templates/782569/messages', headers=headers, json=data)
@@ -85,3 +83,5 @@ def main():
     for mailing in mailings:
         send_email(repository, mailing)
         time.sleep(1)
+
+

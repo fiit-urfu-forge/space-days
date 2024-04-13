@@ -101,7 +101,7 @@ class Repository:
             return event[0].is_children
         return False
 
-    def save_new_mailing(self: Repository, mailing: model.SendingLog) -> None:
+    def save_new_mailing(self: Repository, mailing: model.Mailing) -> None:
         self.execute("""PRAGMA TablePathPrefix("{}");
             DECLARE $mailingData AS List<Struct<
                 mailing_id: Utf8,
@@ -213,7 +213,7 @@ class Repository:
     def delete_partner(self: Repository, partner_id: str) -> None:
         self.execute("""PRAGMA TablePathPrefix("{}");
             DELETE FROM partners
-            WHERE partner_id == "{}";
+            WHERE partner_id == "{}";ш
         """.format(YDB_DATABASE, partner_id), {})
 
     def get_partners(self: Repository, partners: list[str] | None) -> list[model.Partner]:
@@ -231,7 +231,7 @@ class Repository:
 
     def get_admin_by_email(self: Repository, email: str) -> list[str]:
         return (self.execute("""PRAGMA TablePathPrefix("{}");
-            SELECT DISTINCT email FROM admins
+            SELECT DISTINCT email, is_owner FROM admins
             WHERE email = "{}";
         """.format(YDB_DATABASE, email), {}))[0].rows
 
@@ -257,3 +257,122 @@ class Repository:
             result_raws.append(model.Admin(email=admin.email, is_owner=admin.is_owner))
         return result_raws
 
+    def delete_admin(self: Repository, email: str) -> None:
+        self.execute("""PRAGMA TablePathPrefix("{}");
+        DELETE FROM admins
+        WHERE email = "{}" AND is_owner = false;""".format(YDB_DATABASE, email), {})
+
+    def transfer_owner(self: Repository, admins: list[model.Admin]) -> None:
+        self.execute("""PRAGMA TablePathPrefix("{}");
+            DECLARE $adminData AS List<Struct<
+                email: Utf8,
+                is_owner: Bool>>;
+
+            UPSERT INTO admins
+            SELECT
+                email,
+                is_owner
+            FROM AS_TABLE($adminData);""".format(YDB_DATABASE), {"$adminData": admins})
+
+    def save_slot(self, body: model.Slot):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+            DECLARE $slotData AS List<Struct<
+                slot_id: Uint64,
+                event_id: Uint64,
+                amount: Uint64,
+                start_time: Utf8>>;
+            
+            INSERT INTO slots
+            SELECT
+                slot_id,
+                event_id,
+                amount,
+                CAST(start_time AS Datetime) AS start_time
+            FROM AS_TABLE($slotData);""".format(YDB_DATABASE), {"$slotData": [body]})
+
+    def get_max_slot_id(self) -> int:
+        return (self.execute("""PRAGMA TablePathPrefix("{}");
+        SELECT max(slot_id) as max_slot from slots""".format(YDB_DATABASE), {}))[0].rows[0].max_slot
+
+    def upsert_slot(self, body):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+            DECLARE $slotData AS List<Struct<
+                slot_id: Uint64,
+                event_id: Uint64,
+                amount: Uint64,
+                start_time: Utf8>>;
+
+            UPSERT INTO slots
+            SELECT
+                slot_id,
+                event_id,
+                amount,
+                CAST(start_time AS Datetime) AS start_time
+            FROM AS_TABLE($slotData)""".format(YDB_DATABASE), {"$slotData": [body]})
+
+    def delete_slot(self, slot_id):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+        DELETE FROM slots
+        WHERE slot_id = {};""".format(YDB_DATABASE, slot_id), {})
+
+    def delete_events(self, event_id):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+        DELETE FROM events
+        WHERE event_id = {};
+        DELETE FROM slots
+        WHERE event_id = {};
+        """.format(YDB_DATABASE, event_id, event_id), {})
+
+    def update_events(self, body):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+        DECLARE $eventData AS List<Struct<
+            event_id: Uint64,
+            age: Utf8,
+            description: Utf8,
+            duration: Utf8,
+            is_children: bool,
+            location: Utf8,
+            summary: Utf8,
+            title: Utf8,
+            id_partner: Utf8>>;
+        
+        UPSERT INTO events
+        SELECT
+            event_id,
+            age,
+            description,
+            duration,
+            is_children,
+            location,
+            summary,
+            title,
+            id_partner
+        FROM AS_TABLE($eventData);""".format(YDB_DATABASE), {"$eventData": [body]})
+
+    def delete_database(self):
+        self.execute("""PRAGMA TablePathPrefix("{}");
+        DELETE FROM events;
+        DELETE FROM slots;""".format(YDB_DATABASE), {})
+
+    def get_data(self) -> list[model.InfoEvent]:
+        events = self.execute("""PRAGMA TablePathPrefix("{}");
+        SELECT DISTINCT email, users.first_name as f_name, last_name as l_name, phone, childs.first_name as name, childs.age as age, slots.start_time as start_time, events.title as title, is_come FROM users
+        LEFT JOIN childs ON childs.user_id = users.user_id 
+        INNER JOIN tickets ON users.user_id = tickets.user_id
+        INNER JOIN slots ON slots.slot_id = tickets.slot_id
+        INNER JOIN events ON slots.event_id = events.event_id
+        ORDER BY f_name;""".format(YDB_DATABASE), {})[0].rows
+        data = list()
+        for event in events:
+            data.append(model.InfoEvent(
+                email=event.email,
+                f_name=event.f_name,
+                l_name=event.l_name,
+                phone=event.phone,
+                name=event.name,
+                age=event.age,
+                start_time=event.start_time,
+                title=event.title,
+                is_come=event.is_come
+            ))
+        return data

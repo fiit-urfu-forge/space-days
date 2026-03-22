@@ -8,7 +8,7 @@ Space Days is a full-stack event registration platform for space-themed activiti
 
 ## Tech Stack
 
-- **Frontend:** React 18 + React Router v6 + React Bootstrap 5
+- **Frontend:** React 18 + TypeScript + React Router v6 + React Bootstrap 5 + CSS Modules
 - **Backend:** Python 3.11 + FastAPI + Pydantic 1.x
 - **Database:** YandexDB (YDB) — not a standard SQL database
 - **Email:** Notisend API integration
@@ -19,8 +19,9 @@ Space Days is a full-stack event registration platform for space-themed activiti
 
 ### Frontend (`/frontend`)
 ```bash
-npm start                    # Dev server on port 3000
+npm start                    # Dev server (react-app-rewired)
 npm test                     # Jest + React Testing Library
+npm run lint                 # ESLint
 npm run build:staging        # Build with .env.staging
 npm run build:production     # Build with .env.production
 npm run deploy:staging       # Build + deploy to S3
@@ -34,25 +35,32 @@ python3 backend/main_bot.py  # Telegram bot
 ```
 
 ### Database
-YDB always runs remotely on Yandex Cloud — there is no local database setup. The `Makefile` contains Docker commands for local YDB but they are not used. Connection is configured via `DB` and `ENDPOINT` env vars.
+YDB always runs remotely on Yandex Cloud — there is no local database setup. Connection is configured via `DB` and `ENDPOINT` env vars.
 
 ## Architecture
 
-### Backend Structure
+### Backend Structure (`backend/src/`)
 The backend follows a layered pattern:
-- **`app/endpoints/app.py`** — All FastAPI routes and query logic (monolithic file)
+- **`app/endpoints/app.py`** — All FastAPI routes and query logic
 - **`app/adapters/repository.py`** — YDB client, connection pooling, query execution
 - **`app/domain/model.py`** — Pydantic request/response models
 - **`app/core.py`** — Date conversion utilities
+- **`app/utils/`** — Logger, datetime и xlsx утилиты
 - **`app/config.py`** — Environment-based configuration
 - **`bot/`** — Telegram bot (aiogram) with its own repository layer
 - **`mailer/`** — Email notification service using Notisend API
+- **`static/`** — Static HTML files (Yandex suggest SDK)
 
-### Frontend Structure
-- **`src/pages/`** — Page components (HomePage, EventsPage, RegistrationPage, TicketsPage, AddEventPage)
-- **`src/components/`** — Reusable UI components
-- **`src/apis/backend.js`** — API client; falls back to sample data when `REACT_APP_API_BASE_URL` is empty
-- **`src/constants.js`** — API base URL from env
+Entry points находятся в `backend/`: `main.py` (API), `main_bot.py` (бот), `main_mailer.py` (рассылка).
+
+### Frontend Structure (`frontend/src/`)
+Фронтенд на TypeScript с CSS Modules (`styles.module.css`):
+- **`pages/main/`** — Пользовательские страницы (home, events, registration, tickets)
+- **`pages/admin/`** — Админ-панель (events, partners, users, export, login)
+- **`components/layouts/`** — Main layout (header + footer) и admin layout (sidebar)
+- **`components/`** — Переиспользуемые компоненты (формы, карточки, кнопки, loaders)
+- **`apis/backend.js`** — API client; falls back to sample data when `REACT_APP_API_BASE_URL` is empty
+- **`shared/image/`** — Статические изображения
 
 ### Key API Endpoints
 - `GET /api/events/` — List events (filterable by event ID, day, hour)

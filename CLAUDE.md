@@ -34,6 +34,24 @@ python3 backend/main.py      # API server on 0.0.0.0:8080
 python3 backend/main_bot.py  # Telegram bot
 ```
 
+### Локальный запуск
+
+Для быстрого запуска обоих сервисов из корня репозитория:
+```bash
+# Frontend (порт 3000) — в одном терминале
+cd frontend && npm start
+
+# Backend (порт 8080) — в другом терминале
+cd backend && pip install -r requirements.txt && python3 main.py
+```
+
+В Codespaces порт бэкенда по умолчанию закрыт — нужно открыть его вручную:
+```bash
+gh codespace ports visibility 8080:public -c $CODESPACE_NAME
+```
+
+Без переменных окружения фронтенд работает в offline-режиме с sample-данными (`REACT_APP_API_BASE_URL` пуст), а бэкенд запустится, но не сможет подключиться к YDB без `DB` и `ENDPOINT`.
+
 ### Database
 YDB always runs remotely on Yandex Cloud — there is no local database setup. Connection is configured via `DB` and `ENDPOINT` env vars.
 

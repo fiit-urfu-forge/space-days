@@ -7,7 +7,7 @@ import { LinkContainer } from "react-router-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import EventList from "components/EventList";
-import { padTime, pluralize, convertDate, convertTime } from "core";
+import { padTime, pluralize, convertDate, convertTime, COSMONAUTICS_DAY } from "core";
 import { getEventsByDays, getEventsByHours } from "apis/backend";
 import Image from "react-bootstrap/Image";
 import Loader from "components/Loader";
@@ -19,7 +19,6 @@ const STATUS_LOADING = 0;
 const STATUS_ERROR = -1;
 const STATUS_LOADED = 1;
 
-const COSMONAUTICS_DAY = new Date(2025, 4 - 1, 12);
 
 const dayMap = {
   12: { header: "День Открытия Фестиваля", subheader: "12 апреля, воскресенье", hours: [10, 11, 12, 13, 14, 15, 16] },

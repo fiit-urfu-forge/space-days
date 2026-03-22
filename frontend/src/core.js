@@ -17,8 +17,10 @@ export function formatTicketId(ticketId) {
   return `${str.substr(0, 3)} ${str.substr(3, 3)} ${str.substr(6)}`;
 }
 
+export const COSMONAUTICS_DAY = new Date(2026, 4 - 1, 12);
+
 export function convertDate(dayOfMonth) {
-  return `${padTime(dayOfMonth)}.04.2024`;
+  return `${padTime(dayOfMonth)}.${padTime(COSMONAUTICS_DAY.getMonth() + 1)}.${COSMONAUTICS_DAY.getFullYear()}`;
 }
 
 export function convertTime(time) {

@@ -4,3 +4,4 @@
 service-key.json
 .idea/
 venv/
+__pycache__

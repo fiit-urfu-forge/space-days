@@ -8,7 +8,6 @@ export async function getEvent(id) {
                 "Content-Type": "application/json",
             },
         });
-
         if (response.ok) {
             const result = await response.json();
             return result;

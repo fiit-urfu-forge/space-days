@@ -73,6 +73,65 @@ Entry points находятся в `backend/`: `main.py` (API), `main_bot.py` (�
 
 Общайся на русском языке. Термины, связанные с программированием (названия технологий, команды, код), можно оставлять на английском.
 
+## Деплой на Staging
+
+Staging доступен по URL: `https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net`
+
+API Gateway (`dnikosmosa-staging`) проксирует:
+- `/` и `/{file}` → S3 бакет `space-days-staging` (frontend)
+- `/api/*`, `/docs`, `/openapi.json` → Serverless Container `bbahf3fnuhlmqmjterui` (backend)
+
+### Предварительные требования
+
+- **Docker** — установлен и запущен
+- **Yandex Cloud CLI (`yc`)** — установлен и авторизован
+- **s3cmd** — установлен и настроен для Yandex Object Storage
+- **Node.js / npm** — для сборки frontend
+
+### Первичная настройка окружения (один раз)
+
+```bash
+# 1. Установить Yandex Cloud CLI
+curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+source ~/.bashrc  # или exec -l $SHELL
+
+# 2. Авторизоваться в Yandex Cloud
+yc config set token <OAUTH_TOKEN>
+yc config set cloud-id b1gs6rm7jilgibstbues
+yc config set folder-id b1g4dt2al06qnmvej9jq
+
+# 3. Настроить Docker для Yandex Container Registry
+yc container registry configure-docker
+
+# 4. Установить s3cmd
+pip3 install s3cmd
+
+# 5. Настроить s3cmd — создать ~/.s3cfg:
+# [default]
+# access_key = <ACCESS_KEY_ID>
+# secret_key = <SECRET_ACCESS_KEY>
+# host_base = storage.yandexcloud.net
+# host_bucket = %(bucket)s.storage.yandexcloud.net
+# use_https = True
+# signature_v2 = True
+#
+# Ключи можно создать: yc iam access-key create --service-account-id aje01gteii89n8aho63b
+```
+
+### Повторный деплой
+
+```bash
+# Backend
+cd backend
+./update_backend_staging.sh
+
+# Frontend
+cd frontend
+npm run deploy:staging
+```
+
+Скрипт backend собирает Docker-образ, пушит в Container Registry и деплоит новую ревизию Serverless Container. Скрипт frontend собирает React-приложение с `.env.staging` и загружает build в S3 бакет.
+
 ## Important Conventions
 
 - **Phone normalization:** Russian phone numbers are normalized to 10 digits (strips +7/8 prefix)

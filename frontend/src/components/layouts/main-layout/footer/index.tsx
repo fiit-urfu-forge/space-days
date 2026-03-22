@@ -33,7 +33,7 @@ export const Footer = () => (
         </Col>
         <Col xs={12} className={styles.footerCol}>
             <hr />
-            <p className={styles.copyright}>© 2024 ФИИТ</p>
+            <p className={styles.copyright}>© 2023 – {new Date().getFullYear()} ФИИТ</p>
         </Col>
     </Row>
 );

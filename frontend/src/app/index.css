@@ -1072,24 +1072,24 @@ span.event-card__title {
   height: 20px;
 }
 
-.event-card.present-15 {
+.event-card.present-card {
   min-height: fit-content;
 }
 
-.present-15 .event-card__title-date {
+.present-card .event-card__title-date {
   margin-left: 18px;
 }
 
-.present-15 .event-card__description {
+.present-card .event-card__description {
   -webkit-line-clamp: unset;
 }
 
-.present-15 .event-card__button {
+.present-card .event-card__button {
   color: #787878 !important;
   border-color: #787878 !important;
 }
 
-.present-15 .img-wrapper {
+.present-card .img-wrapper {
   align-items: center;
 }
 

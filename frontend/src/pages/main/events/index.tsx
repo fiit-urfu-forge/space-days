@@ -19,12 +19,18 @@ const STATUS_LOADING = 0;
 const STATUS_ERROR = -1;
 const STATUS_LOADED = 1;
 
+const COSMONAUTICS_DAY = new Date(2025, 4 - 1, 12);
+
 const dayMap = {
-  13: "13 апреля, суббота",
-  15: "15 апреля, понедельник",
-  17: "17 апреля, среда",
-  19: "19 апреля, пятница",
+  12: { header: "День Открытия Фестиваля", subheader: "12 апреля, воскресенье", hours: [10, 11, 12, 13, 14, 15, 16] },
+  13: { header: "13 апреля, понедельник" },
+  14: { header: "14 апреля, вторник" },
+  15: { header: "15 апреля, среда" },
+  16: { header: "16 апреля, четверг" },
+  17: { header: "17 апреля, пятница" },
+  18: { header: "18 апреля, суббота", presents: true },
 };
+Object.entries(dayMap).forEach(([k, v]) => { v.date = new Date(COSMONAUTICS_DAY.getFullYear(), COSMONAUTICS_DAY.getMonth(), Number(k)); });
 
 export const EventsPage = () => {
   const { status, content } = useLoading();
@@ -90,14 +96,7 @@ function renderLoaded(content, handleRegister) {
       {renderDayMenu(day)}
       <Row>
         <Col>
-          {day === 8 ? (
-            <>
-              <h1 className="day-title">День Открытия Фестиваля</h1>
-              <h2 className="day-title_h2">{dayMap[day]}</h2>
-            </>
-          ) : (
-            <h1 className="day-title">{dayMap[day]}</h1>
-          )}
+          {renderDayTitle(day)}
           <div className="rounded-pill warning warning_event">
             <Image src={require("shared/image/warning.png")} alt="внимание" />
             <p>
@@ -118,58 +117,70 @@ function renderLoaded(content, handleRegister) {
           </div>
         </Col>
       </Row >
-      {day === 8 && renderTimeMenu(day, hour)
-      }
+      {dayMap[day].hours && renderTimeMenu(day, hour, dayMap[day].hours)}
       <Row className="events-row justify-content-between">
         <EventList events={events} onRegister={handleRegister} />
-        {/*day === 15 && (
-          <Col className="event-card present-15" as={"article"}>
-            <div className="img-wrapper">
-              <Image fluid rounded src={require("shared/image/present_logo.png")}></Image>
-            </div>
-
-            <div>
-              <h3>Вручение призов</h3>
-              <hr></hr>
-              <div>
-                <span className="event-card__title">Дата:</span>{" "}
-                <span className="event-card__title-date">15.04.2023</span>
-              </div>
-              <div className="">
-                <span className="event-card__title">Время:</span>{" "}
-                <span> с 13:00 до 16:00</span>
-              </div>
-
-              <div className="event-card__location">
-                <span className="event-card__title">Адрес:</span>{" "}
-                <span>
-                  {" "}
-                  Библиотечный Центр «Екатеринбург», ул. Мамина-Сибиряка, 193
-                </span>
-              </div>
-              <p className="event-card__description">
-                За каждую 5 собранную наклейку — вручаем подарок. Соберите 15
-                наклеек и получите БОЛЬШОЙ ПОДАРОК от Школы астрономии
-                KantrSkrip и партнеров!
-              </p>
-            </div>
-            <Button
-              disabled={true}
-              variant="outline-primary"
-              className="rounded-pill event-card__button"
-              onClick={handleRegister}
-            >
-              Вход свободный
-            </Button>
-          </Col>
-        )*/}
+        {dayMap[day].presents && renderPresentCard()}
       </Row>
     </>
   );
 }
 
+function renderDayTitle(day) {
+  const { header, subheader } = dayMap[day];
+  return (
+    <>
+      <h1 className="day-title">{header}</h1>
+      {subheader && <h2 className="day-title_h2">{subheader}</h2>}
+    </>
+  );
+}
+
+function renderPresentCard() {
+  return (
+    <Col className="event-card present-card" as={"article"}>
+      <div className="img-wrapper">
+        <Image fluid rounded src={require("shared/image/present_logo.png")}></Image>
+      </div>
+
+      <div>
+        <h3>Вручение призов</h3>
+        <hr></hr>
+        <div>
+          <span className="event-card__title">Дата:</span>{" "}
+          <span className="event-card__title-date">18.04.2026</span>
+        </div>
+        <div className="">
+          <span className="event-card__title">Время:</span>{" "}
+          <span>с 13:00 до 16:00</span>
+        </div>
+
+        <div className="event-card__location">
+          <span className="event-card__title">Адрес:</span>{" "}
+          <span>
+            {" "}
+            Библиотечный Центр «Екатеринбург», ул. Мамина-Сибиряка, 193
+          </span>
+        </div>
+        <p className="event-card__description">
+          За каждую 5 собранную наклейку — вручаем подарок. Соберите 15
+          наклеек и получите БОЛЬШОЙ ПОДАРОК от Школы астрономии
+          KantrSkrip и партнеров!
+        </p>
+      </div>
+      <Button
+        disabled={true}
+        variant="outline-primary"
+        className="rounded-pill event-card__button"
+      >
+        Вход свободный
+      </Button>
+    </Col>
+  );
+}
+
 function renderDayMenu(day) {
-  const days = [13, 15, 17, 19];
+  const days = Object.keys(dayMap).map(Number);
   const result = days.map((it, index) => {
     const className = `date-button rounded-pill ${it === day ? "date-button_checked" : ""
       }`;
@@ -195,8 +206,7 @@ function renderDayMenu(day) {
   );
 }
 
-function renderTimeMenu(day, hour) {
-  const hours = [11, 12, 13, 14, 15];
+function renderTimeMenu(day, hour, hours) {
   return (
     <Row className="time-row">
       {hours.map((h) => {
@@ -233,18 +243,17 @@ function useLoading() {
       const dayParameter = query.get("day");
       const hourParameter = query.get("hour");
 
+      const days = Object.keys(dayMap).map(Number);
       const now = new Date(Date.now());
-      const defaultDay =
-        new Date(2024, 4 - 1, 13) === now || new Date(2024, 4 - 1, 15) === now || new Date(2024, 4 - 1, 17) === now || new Date(2024, 4 - 1, 19) === now
-          ? now.getDate()
-          : 13;
+      const today = days.find((d) => dayMap[d].date.getTime() === now.getTime());
+      const defaultDay = today ?? days[0];
 
-      const hour = hourParameter ? parseInt(hourParameter, 10) : null;
-      const day = hour
-        ? 8
-        : dayParameter
-          ? parseInt(dayParameter, 10)
-          : defaultDay;
+      const dayParam = dayParameter ? parseInt(dayParameter, 10) : null;
+      const day = dayParam && days.includes(dayParam) ? dayParam : defaultDay;
+
+      const hourParam = hourParameter ? parseInt(hourParameter, 10) : null;
+      const dayHours = dayMap[day].hours;
+      const hour = hourParam && dayHours?.includes(hourParam) ? hourParam : null;
 
       const backendEvents = hour
         ? await getEventsByHours(day, [hour])

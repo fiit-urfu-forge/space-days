@@ -1,0 +1,88 @@
+.adminPanel {
+    position: fixed;
+    padding: 21px 0 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 74px;
+    background-color: #363636;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.link,
+.adminPanel:hover .currentPath:not(:hover) {
+    text-decoration: none;
+    color: #81848D;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.link:hover {
+    background-color: #6A6A6A;
+    border-left: 3px solid;
+    color: #fff;
+}
+
+.currentPath {
+    border-left: 3px solid;
+    color: #fff;
+}
+
+.currentPath .iconPathStroke,
+.link:hover .iconPathStroke {
+    stroke: #fff;
+}
+
+.currentPath .iconPathFill,
+.link:hover .iconPathFill {
+    fill: #fff;
+}
+
+.adminPanel:hover .currentPath:not(:hover) .iconPathStroke {
+    stroke: #81848D;
+}
+
+.adminPanel:hover .currentPath:not(:hover) .iconPathFill {
+    fill: #81848D;
+}
+
+.icon {
+    height: 17px;
+    width: 67px;
+    cursor: pointer;
+    position: fixed;
+}
+
+.linkTitle {
+    display: none;
+    margin-inline-start: 87px;
+}
+
+.adminPanel:hover {
+    width: 210px;
+    transition: .2s;
+}
+
+.adminPanel:hover .linkTitle {
+    display: inline;
+}
+
+.logoutIcon {
+    margin-block-start: auto;
+}
+
+.hr {
+    color: #81848D;
+    margin-inline: 10px;
+    z-index: 2;
+}
+
+.main {
+    margin-inline-start: 74px;
+    padding: 20px 50px;
+}

@@ -1,0 +1,67 @@
+.hr {
+    height: 3px;
+    color: #DADADA;
+    background-color: #DADADA;
+    margin-block-end: 35px;
+}
+
+.h2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-block-end: 30px;
+}
+
+.usersList {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 0;
+}
+
+.listItem {
+    display: flex;
+    list-style: none;
+    max-width: 400px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.forms {
+    display: flex;
+}
+
+.button {
+    width: 140px;
+    height: 40px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+    margin-block-start: 21px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    color: #81848D;
+    font-weight: 600;
+}
+
+.inputArea {
+    margin-block-start: 5px;
+    width: 340px;
+    height: 40px;
+    border: 1px solid #DADADA;
+    border-radius: 3px;
+    font-size: 13px;
+    padding: 13px 10px;
+    margin-block-end: 70px;
+    margin-inline-end: 40px;
+}
+
+.formWrapper {
+    display: flex;
+    margin-inline-end: 67px;
+}

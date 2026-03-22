@@ -55,10 +55,10 @@ const SlotsForm = ({ form, onChange }) => {
       ))}
       <Button
         variant="outline-primary"
-        className="add-child-button rounded-circle d-flex m-auto border"
+        className="add-child-button d-flex m-auto border"
         onClick={handleAddSlot}
       >
-        <Image src="./image/plus.png" alt="кнопка добавить"></Image>
+        Добавить слот
       </Button>
     </>
   );

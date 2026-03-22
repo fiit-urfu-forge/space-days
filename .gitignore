@@ -5,3 +5,4 @@ service-key.json
 .idea/
 venv/
 __pycache__
+.vscode

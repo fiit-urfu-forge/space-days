@@ -34,19 +34,20 @@ const Ticket = ({ event, slot, ticket }) => {
           <p className="ticket__seats">
             {`${adult} ${pluralize(adult, 'взрослый', 'взрослых', 'взрослых')}`}, {`${child} ${pluralize(child, 'ребенок', 'детей', 'детей')}`}
           </p>
+          <p class="ticket__location">НЕОБХОДИМА СМЕННАЯ ОБУВЬ</p>
           <p className="ticket__info">
             Для того, чтобы пройти на мероприятие — назовите номер билета
           </p>
         </div>
       </div>
       <div className="rounded-pill warning">
-        <Image src="./image/warning.png" alt="внимание"></Image>
+        <Image src={require("shared/image/warning.png")} alt="внимание" />
         <p>
           Вся необходимая информация о мероприятии будет выслана на вашу почту
         </p>
       </div>
       <div style={{ textAlign: "center", padding: 20, fontSize: 24 }}>
-          <a href="/#/events">Записаться еще</a>
+        <a href="/#/events">Записаться еще</a>
       </div>
     </Container>
   );

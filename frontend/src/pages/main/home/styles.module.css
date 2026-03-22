@@ -1,0 +1,97 @@
+.banner .btn.active {
+    color: #5e7fd6;
+    border: #5e7fd6 solid 3px;
+  }
+  
+  .banner .btn.active:active {
+    color: #fff;
+  }
+  
+  .banner .btn.active:hover {
+    background: #5e7fd6;
+    color: #fff;
+  }
+
+  .banner .btn.active {
+    color: #5e7fd6;
+    border: #5e7fd6 solid 3px;
+  }
+  
+  .banner .btn.active:active {
+    color: #fff;
+  }
+  
+  .banner .btn.active:hover {
+    background: #5e7fd6;
+    color: #fff;
+  }
+  
+  .banner {
+    padding: 60px;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .banner .col {
+    flex: 0 0 auto;
+    width: auto;
+  }
+  
+  .banner img {
+    height: 100%;
+    object-fit: contain;
+    border-radius: 122px !important;
+  }
+  
+  .banner h1 {
+    font-size: calc(2.3rem + 1.5vw);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .banner p {
+    font-size: 25px;
+    margin-bottom: 80px;
+  }
+  
+  .banner p:first-of-type {
+    font-size: 15px;
+    text-transform: uppercase;
+    color: #00000080;
+    margin-bottom: 50px;
+  }
+  
+  .banner a {
+    padding: 18px 60px;
+  }
+
+  .mainButton {
+    font-weight: 700;
+  }
+
+  .yearRow {
+    margin-inline-start: 50px;
+    margin-block-start: 30px;
+    height: 72px;
+  }
+
+  .yearButton {
+    color: #95b0fa;
+    font-weight: 400 !important;
+    border-color: #95b0fa;
+    margin-inline-end: 20px;
+  }
+
+  .selectedYear {
+    padding: 12px 20px;
+    font-size: 28px;
+    font-weight: 700 !important;
+    color: #5e7fd6;
+    border-color: #5e7fd6;
+  }
+
+@media screen and (max-width: 480px) {
+  .banner {
+    padding: 10px;
+  }  
+}

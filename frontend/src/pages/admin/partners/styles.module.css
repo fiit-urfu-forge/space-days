@@ -1,0 +1,68 @@
+.hr {
+    height: 3px;
+    color: #DADADA;
+    background-color: #DADADA;
+    margin-block-end: 35px;
+}
+
+.addButton {
+    margin-block-end: 55px;
+    font-size: 13px;
+    padding: 15px 30px;
+    border-width: 2px;
+    border-radius: 7px;
+}
+
+.table {
+    display: grid;
+    grid-template-rows: 45px;
+    grid-auto-rows: 127px;
+    border-radius: 7px;
+    overflow: hidden;
+    gap: 1px;
+    background-color: #DADADA;
+    border: 1px solid #DADADA;
+}
+
+.row {
+    display: grid;
+    position: relative;
+    background-color: white;
+    grid-template-columns: 150px 340px auto;
+}
+
+.titles {
+    background-color: #F8FAFF;
+}
+
+.titles > h3 {
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    margin-inline-start: 15px;
+    margin-block-end: 0;
+}
+
+.logo {
+    margin: 30px 15px;
+    height: 67px;
+    width: auto;
+}
+
+.row > span,
+.row > a {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    margin-inline-start: 15px;
+}
+
+.buttons {
+    position: absolute;
+    right: 0;
+    bottom: 15px;
+    display: flex;
+    gap: 25px;
+    margin-inline-end: 15px;
+}

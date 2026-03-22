@@ -1,0 +1,19 @@
+.deleteButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #5E7FD6;
+    border-radius: 7px;
+    padding: 0;
+}
+
+.deleteButton > svg {
+    height: 15px;
+    width: auto;
+}
+
+.deleteButton:hover > svg path{
+    stroke: white;
+}

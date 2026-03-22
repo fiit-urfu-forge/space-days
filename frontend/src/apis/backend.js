@@ -1,4 +1,6 @@
 import { API_BASE_URL } from "../constants";
+import { PutObjectCommand, CreateBucketCommand } from "@aws-sdk/client-s3";
+import { s3Client } from "s3Client.js";
 
 export async function getEvent(id) {
     if (API_BASE_URL) {
@@ -20,10 +22,76 @@ export async function getEvent(id) {
     }
 }
 
+export async function getExportFile() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/export/all`, {
+            method: "GET",
+        }).then(res => res.blob()).then(blob => {
+            const url = window.URL.createObjectURL(new Blob([blob]),);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download",
+                "spaceDaysExport.xlsx");
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        });
+    }
+}
+
+export async function deleteEvent(id) {
+
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/events/?event_id=${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
 export async function getEventsByDays(days) {
     if (API_BASE_URL) {
         const daysQuery = days.map(d => `days=${d}`).join('&');
         const response = await fetch(`${API_BASE_URL}/events/?${daysQuery}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            console.log("HTTP error: " + response.status);
+            return null;
+        }
+    } else {
+        return delay(1000).then(() => sampleByDaysEvents);
+    }
+}
+
+export async function getEvents() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/events/`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -94,6 +162,258 @@ export async function getMyTickets(phone, birthdate) {
             ok: true,
             status: 200,
             body: []
+        }));
+    }
+}
+
+export async function getPartners() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/partners`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            console.log("HTTP error: " + response.status);
+            return null;
+        }
+    } else {
+        return delay(1000).then(() => samplePartners);
+    }
+}
+
+export async function addPartner(form, id) {
+
+    if (API_BASE_URL) {
+        const formData = new FormData();
+        formData.append('partner_id', id ? id : form.file[0].name.substr(0, form.file[0].name.length - 4));
+        formData.append("name", form.name);
+        formData.append("link", form.link);
+
+        const response = await fetch(`${API_BASE_URL}/partners?partner_id=${id ? id : form.file[0].name.substr(0, form.file[0].name.length - 4)}&name=${form.name}&link=${form.link}`, {
+            method: id ? "PUT" : "POST",
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function deletePartner(id) {
+
+    if (API_BASE_URL) {
+
+        const response = await fetch(`${API_BASE_URL}/partners?partner_id=${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function getUsers() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            console.log("HTTP error: " + response.status);
+            return null;
+        }
+    } else {
+        return delay(1000).then(() => samplePartners);
+    }
+}
+
+export async function deleteAdmin(id) {
+
+    if (API_BASE_URL) {
+
+        const response = await fetch(`${API_BASE_URL}/admin?email=${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function addAdmin(form) {
+
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function transferAdmin(form) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/admin/owner`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
+        }));
+    }
+}
+
+export async function addPartnerLogo(form, id) {
+    const name = id ? `${id}.png` : form.file[0].name;
+
+    const params = {
+        Bucket: "space-days-staging", // Имя бакета, например 'sample-bucket-101'.
+        Key: `image/partners/${name}`, // Имя объекта, например 'sample_upload.txt'.
+        Body: form.file[0], // Содержимое объекта, например 'Hello world!".
+        ACL: 'public-read',
+    };
+
+    try {
+        const results = await s3Client.send(new PutObjectCommand(params));
+        console.log(
+            "Successfully created " +
+            params.Key +
+            " and uploaded it to " +
+            params.Bucket +
+            "/" +
+            params.Key
+        );
+        return results; // Для модульного тестирования.
+    } catch (err) {
+        console.log("Error", err);
+    }
+}
+
+export async function loadEvents(file, force = false) {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/events/xlsx`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: sampleTicket
         }));
     }
 }
@@ -296,3 +616,16 @@ const sampleTicket = {
     slot_id: 1,
     amount: 0,
 };
+
+const samplePartners = [
+    {
+        "partner_id": "fiit",
+        "name": "ФИИТ",
+        "link": "https://fiit-urfu.ru/"
+    },
+    {
+        "partner_id": "smartschool",
+        "name": "Смарт Школа",
+        "link": "https://smartschoolekb.ru",
+    }
+];

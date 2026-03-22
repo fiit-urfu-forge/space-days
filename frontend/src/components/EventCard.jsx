@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import partnersLinks from "../partnersLinks";
 import { pluralize } from "../core";
+import { BASE_URL } from "constants";
 
 const EventCard = ({ event, onRegister }) => {
   const [slot, setSlot] = useState(null);
@@ -15,7 +16,7 @@ const EventCard = ({ event, onRegister }) => {
     <Col className="event-card" as={"article"}>
       <a href={partnersLinks[event.id_partner]}>
         <div className="img-wrapper">
-          <Image fluid rounded src={event.image}></Image>
+          <Image fluid rounded src={`${BASE_URL}/image/partners/${event.id_partner}.png`}></Image>
         </div>
       </a>
       <div>
@@ -77,9 +78,8 @@ function renderSlots(times, slot, setSlot) {
       );
     }
 
-    const className = `event-card__time time-button rounded-pill ${
-      it.slotId === (slot && slot.slotId) ? " time-button_checked" : ""
-    }`;
+    const className = `event-card__time time-button rounded-pill ${it.slotId === (slot && slot.slotId) ? " time-button_checked" : ""
+      }`;
     return (
       <span
         key={index}

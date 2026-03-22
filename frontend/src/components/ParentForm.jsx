@@ -49,7 +49,7 @@ const ParentForm = ({ form, onChange }) => {
         />
       </Form.Group>
       <div className="rounded-pill warning">
-        <Image src="./image/warning.png" alt="внимание"></Image>
+        <Image src={require("shared/image/warning.png")} alt="внимание" />
         <p>
           На <span>один номер телефона</span> можно зарегистрировать максимум{" "}
           <span>себя и 3 детей</span>
@@ -76,7 +76,7 @@ const ParentForm = ({ form, onChange }) => {
         />
         {form.hasChildren && (
           <div className="rounded-pill warning">
-            <Image src="./image/warning.png" alt="внимание"></Image>
+            <Image src={require("shared/image/warning.png")} alt="внимание" />
             <p>
               Регистрировать ребенка может только{" "}
               <span>родитель/законный представитель!</span>

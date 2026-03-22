@@ -1,0 +1,116 @@
+.formWrapper {
+    position: fixed;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.form {
+    width: 550px;
+    height: auto;
+    background: #fff;
+    border-radius: 7px;
+    padding: 15px 25px 25px;
+}
+
+.title {
+    font-size: 20px;
+    margin-block-end: 10px;
+}
+
+.hr {
+    margin-block: 0 20px;
+    color: #DADADA;
+}
+
+.button {
+    width: 140px;
+    height: 40px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+}
+
+.upload {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 100px;
+    height: auto;
+    border: 1px dashed #5E7FD6;
+    border-radius: 7px;
+    grid-row: 1 / span 2;
+    grid-column-start: 2;
+    margin-block-start: 20px;
+    padding: 0 10px;
+}
+
+.uploaded {
+    cursor: default;
+}
+
+.inputs {
+    display: grid;
+    grid-template-columns: auto 100px;
+    gap: 25px 35px;
+    margin-block-end: 50px;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    color: #81848D;
+    font-weight: 600;
+}
+
+.inputArea {
+    margin-block-start: 5px;
+    height: 40px;
+    border: 1px solid #DADADA;
+    border-radius: 3px;
+    font-size: 13px;
+    padding: 13px 10px;
+}
+
+.logo {
+    width: 100%;
+    object-fit: cover;
+}
+
+.buttons {
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+
+.uploaded {
+    border: 1px solid #DADADA;
+}
+
+.plusIcon {
+    width: 40px;
+    height: 40px;
+}
+
+.editButton.editButton {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.active {
+    display: flex;
+}

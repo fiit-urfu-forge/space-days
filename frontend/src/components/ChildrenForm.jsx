@@ -61,7 +61,7 @@ const ChildrenForm = ({ form, onChange }) => {
           className="add-child-button rounded-circle d-flex m-auto border"
           onClick={handleAddChild}
         >
-          <Image src="./image/plus.png" alt="кнопка добавить"></Image>
+          <Image src={require("shared/image/plus.png")} alt="кнопка добавить" />
         </Button>
       )}
     </>

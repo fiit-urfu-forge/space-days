@@ -61,6 +61,10 @@ The backend follows a layered pattern:
 - `POST /api/event` — Create event with slots (admin)
 - `POST /api/emails/subscribe` — Newsletter subscription
 
+## Communication
+
+Общайся на русском языке. Термины, связанные с программированием (названия технологий, команды, код), можно оставлять на английском.
+
 ## Important Conventions
 
 - **Phone normalization:** Russian phone numbers are normalized to 10 digits (strips +7/8 prefix)

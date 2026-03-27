@@ -1,7 +1,5 @@
 import Button from "react-bootstrap/Button";
 import styles from "./styles.module.css";
-import { deletePartner } from "apis/backend";
-import { getPartners } from "apis/backend";
 import classnames from "classnames";
 
 type TDeleteButtonProps = {

@@ -6,7 +6,6 @@ import uuid
 import requests
 import pytz
 
-from typing import Annotated
 
 import pandas as pd
 
@@ -551,32 +550,6 @@ def delete_events(request: Request, event_id: int):
     repository: Repository = request.app.repository
     repository.delete_events(event_id)
 
-
-@router.get("/api/partners/", response_model=list[model.Partner])
-def get_partners(request: Request, partner_ids: Annotated[list[str] | None, Query()] = None):
-    repository: Repository = request.app.repository
-    return repository.get_partners(partner_ids)
-
-
-@router.post("/api/partners/", response_model=model.Partner)
-def create_partners(request: Request, partner_id: str, name: str, link: str):
-    repository: Repository = request.app.repository
-    partner = model.Partner(partner_id=partner_id, name=name, link=link)
-    repository.create_partner(partner)
-    return partner
-
-
-@router.put("/api/partners/", response_model=model.Partner)
-def update_partners(request: Request, partner_id: str, body: model.PartnerRequest):
-    repository: Repository = request.app.repository
-    repository.update_partner(partner_id, body)
-    return model.Partner(partner_id=partner_id, name=body.name, link=body.link)
-
-
-@router.delete("/api/partners/")
-def delete_partners(request: Request, partner_id: str):
-    repository: Repository = request.app.repository
-    repository.delete_partner(partner_id)
 
 
 @router.post("/api/admin/")

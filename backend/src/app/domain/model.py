@@ -182,16 +182,6 @@ class EventJson(BaseModel):
     slots: list[SlotJson]
 
 
-class Partner(BaseModel):
-    partner_id: str
-    name: str
-    link: str
-
-
-class PartnerRequest(BaseModel):
-    name: str | None = None
-    link: str | None = None
-
 
 class Admin(BaseModel):
     email: str

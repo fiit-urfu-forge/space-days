@@ -184,51 +184,6 @@ class Repository:
                 birthdate=birthdate
             )
 
-    def create_partner(self: Repository, partner: model.Partner) -> None:
-        self.execute("""PRAGMA TablePathPrefix("{}");
-            DECLARE $partnerData AS List<Struct<
-                partner_id: Utf8,
-                link: Utf8,
-                name: Utf8>>;
-
-            INSERT INTO partners
-            SELECT 
-                partner_id,
-                link,
-                name
-            FROM AS_TABLE($partnerData);
-        """.format(YDB_DATABASE), {"$partnerData": [partner]})
-
-    def update_partner(self: Repository, partner_id: str, partner: model.PartnerRequest) -> None:
-        partner_sql = 'PRAGMA TablePathPrefix("{}");\nUPDATE partners\nSET '.format(YDB_DATABASE)
-        if partner.name is not None:
-            partner_sql += f'name="{partner.name}"'
-            if partner.link is not None:
-                partner_sql += ", "
-        if partner.link is not None:
-            partner_sql += f'link="{partner.link}"'
-        partner_sql += f'\nWHERE partner_id = "{partner_id}";'
-        self.execute(partner_sql, {})
-
-    def delete_partner(self: Repository, partner_id: str) -> None:
-        self.execute("""PRAGMA TablePathPrefix("{}");
-            DELETE FROM partners
-            WHERE partner_id == "{}";ш
-        """.format(YDB_DATABASE, partner_id), {})
-
-    def get_partners(self: Repository, partners: list[str] | None) -> list[model.Partner]:
-        partner_sql = """PRAGMA TablePathPrefix("{}");
-        SELECT * FROM partners
-        """.format(YDB_DATABASE)
-        if partners:
-            partner_sql += f"""WHERE partner_id IN ({', '.join([f'"{partner}"' for partner in partners])})"""
-        partner_sql += ';'
-        partners_raws = (self.execute(partner_sql, {}))[0].rows
-        result_raws = []
-        for partner in partners_raws:
-            result_raws.append(model.Partner(partner_id=partner.partner_id, link=partner.link, name=partner.name))
-        return result_raws
-
     def get_admin_by_email(self: Repository, email: str) -> list[str]:
         return (self.execute("""PRAGMA TablePathPrefix("{}");
             SELECT DISTINCT email, is_owner FROM admins

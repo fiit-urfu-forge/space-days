@@ -6,7 +6,6 @@ import { EventsPage } from "./main/events";
 import { AdminEventsPage } from "./admin/events";
 import { RegistrationPage } from "./main/registration";
 import { TicketsPage } from "./main/tickets";
-import { PartnersPage } from "./admin/partners";
 import { NotFound } from "components/not-found";
 import { AdminLayout } from "components/layouts/admin-layout";
 import { LogInPage } from "./admin/login";
@@ -14,7 +13,6 @@ import { LogInSuppPage } from "./admin/login/support";
 import { AdminUsersPage } from "./admin/users";
 import { ExportPage } from "./admin/export";
 import { eventsLoader } from "./admin/events";
-import { partnersLoader } from "./admin/partners";
 
 const routesConfig = [
   { path: "*", element: <NotFound /> },
@@ -41,11 +39,6 @@ const routesConfig = [
       {
         path: "/admin/export",
         element: <ExportPage />,
-      },
-      {
-        path: "/admin/partners",
-        element: <PartnersPage />,
-        loader: partnersLoader,
       },
     ],
   },

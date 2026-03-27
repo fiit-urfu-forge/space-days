@@ -39,17 +39,6 @@ export const AdminLayout = () => {
           </svg>
           <span className={styles.linkTitle}>Мероприятия</span>
         </Link>
-        <Link to="admin/partners" className={classnames(styles.link, { [styles.currentPath]: location.pathname === "/admin/partners" })}>
-          <svg width="17" height="17" className={styles.icon} viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path className={styles.iconPathStroke} d="M14.1464 16.3462H2.85352C1.69994 16.3462 0.728516 15.3001 0.728516 14.0577V6.08082C0.728516 4.83851 1.69994 3.79236 2.85352 3.79236H14.1464C15.2999 3.79236 16.2714 4.83851 16.2714 6.08082V14.0577C16.2714 15.3001 15.2999 16.3462 14.1464 16.3462Z
-M12.3857 3.79226H4.61426V1.9615C4.61426 1.24227 5.16069 0.653809 5.82854 0.653809H11.1714C11.8393 0.653809 12.3857 1.24227 12.3857 1.9615V3.79226Z
-M1.21436 9.02307H16.2715
-M4.12842 7.97693V10.5923
-M12.8716 7.97693V10.5923" stroke="#81848D" strokeLinecap="round" strokeWidth="1.5" strokeMiterlimit="10" />
-
-          </svg>
-          <span className={styles.linkTitle}>Партнёры</span>
-        </Link>
         <Link to="admin/export" className={classnames(styles.link, { [styles.currentPath]: location.pathname === "/admin/export" })}>
           <svg width="19" height="19" className={styles.icon} viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path className={styles.iconPathStroke} d="M6.66667 10.2083L9.5 13.0417M9.5 13.0417L12.3333 10.2083M9.5 13.0417L9.5 5.95833M1 9.5C1 4.80558 4.80558 1 9.5 1C14.1944 1 18 4.80558 18 9.5C18 14.1944 14.1944 18 9.5 18C4.80558 18 1 14.1944 1 9.5Z" stroke="#81848D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

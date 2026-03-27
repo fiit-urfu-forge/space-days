@@ -150,6 +150,27 @@ npm run deploy:staging
 
 Скрипт backend собирает Docker-образ, пушит в Container Registry и деплоит новую ревизию Serverless Container. Скрипт frontend собирает React-приложение с `.env.staging` и загружает build в S3 бакет.
 
+## Email System (Notisend)
+
+Письма отправляются через pull-based очередь, а не синхронно из API.
+
+**Поток:**
+1. `POST /api/events/subscribe` → `save_new_mailing(is_send=False)` в таблицу `mailings` (YDB)
+2. Отдельный процесс `main_mailer.py` опрашивает таблицу, забирает до 20 записей, шлёт через Notisend API (шаблон 782569), помечает `is_send=True`, пишет `sending_log`
+
+**Развёртывание mailer:**
+- Mailer развёрнут **только в production** — читает production-БД (`etn2egari06s1uugo1dn`) и отправляет реальные письма
+- На staging mailer **не развёрнут** — записи `mailings` остаются в БД, но письма не отправляются
+- Локально — та же staging-БД, письма тоже не отправляются (mailer не запущен)
+
+**Конфигурация mailer (`backend/src/mailer/config.py`):**
+- API_TOKEN и YDB-подключение **захардкожены**, env vars не читаются
+- Захардкоженная БД в коде = staging (`etnct5k5881k8ulft373`), но в production используется production-БД
+
+**Особенности:**
+- `.env` и `.env.staging` указывают на одну и ту же БД — local и staging делят данные
+- Нет механизма подавления писем в коде (нет dry-run, DEBUG-флага), но на практике письма отправляются только в production, т.к. только там запущен mailer
+
 ## Important Conventions
 
 - **Phone normalization:** Russian phone numbers are normalized to 10 digits (strips +7/8 prefix)

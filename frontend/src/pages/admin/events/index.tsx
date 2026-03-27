@@ -26,6 +26,8 @@ export const AdminEventsPage = () => {
     const [modalActive, setModalActive] = useState(false);
     const [loadModalActive, setLoadModalActive] = useState(false);
     const [eventsList, setEventsList] = useState(useLoaderData());
+    const [editingEvent, setEditingEvent] = useState(null);
+
     useEffect(() => {
         const fetchData = async () => {
             const eventsList = await getEvents();
@@ -49,10 +51,11 @@ export const AdminEventsPage = () => {
             <h3>Партнёр</h3>
             <h3>Название</h3>
             <h3>Крт. описание</h3>
-            <h3>Полное описание</h3>
+            <h3 className={styles.collapsible}>Полное описание</h3>
             <h3>Возраст</h3>
             <h3>Продол-ть</h3>
             <h3>Слоты</h3>
+            <h3></h3>
         </div>
         {eventsList && eventsList.map(event => {
             let imgSrc;
@@ -67,18 +70,19 @@ export const AdminEventsPage = () => {
                     <Image src={imgSrc} className={styles.logo} />
                     <span>{event.title}</span>
                     <span>{event.summary}</span>
-                    <span className={styles.description}>{event.description}</span>
+                    <span className={classnames(styles.description, styles.collapsible)}>{event.description}</span>
                     <span>{event.age}</span>
                     <span>{event.duration}</span>
                     <div className={styles.slots}>
                         {event.slots && event.slots.map(slot => {
                             const d = new Date(slot.start_time);
-                            const date = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-                            const time = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                            const date = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+                            const time = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
                             return <div key={slot.slot_id}>{date} {time} — {slot.available_users ?? '?'}/{slot.amount}</div>;
                         })}
                     </div>
                     <div className={styles.buttons}>
+                        <EditButton className="" onClickHandler={() => { setEditingEvent(event); setModalActive(true); }} />
                         <DeleteButton element_id={event.event_id} updateList={setEventsList} list={eventsList} deleteHandle={handleDelete} />
                     </div>
                 </div>)
@@ -100,8 +104,8 @@ export const AdminEventsPage = () => {
                 }}
                 onClick={e => e.target.value = null} />
             <div className={styles.pageButtons}>
-                <span className={!modalActive ? classnames(styles.allEventsButton, styles.activeWindow) : styles.allEventsButton} onClick={() => { setModalActive(false) }}>Все мероприятия</span>
-                <span className={modalActive ? classnames(styles.editEventButton, styles.activeWindow) : styles.editEventButton} >Редактор</span>
+                <span className={!modalActive ? classnames(styles.allEventsButton, styles.activeWindow) : styles.allEventsButton} onClick={() => { setModalActive(false); setEditingEvent(null); }}>Все мероприятия</span>
+                <span className={modalActive ? classnames(styles.editEventButton, styles.activeWindow) : styles.editEventButton} >{editingEvent ? `Редактирование: ${editingEvent.title}` : 'Редактор'}</span>
                 {!modalActive && <div className={styles.actionButtons}>
                     <Button
                         className={classnames("outline-primary", styles.addButton)}
@@ -118,17 +122,23 @@ export const AdminEventsPage = () => {
                     <Button
                         className={classnames("outline-primary", styles.addButton)}
                         variant="outline-primary"
-                        onClick={() => setModalActive(true)}
+                        onClick={() => { setEditingEvent(null); setModalActive(true); }}
                     >
                         Добавить мероприятие
                     </Button>
                 </div>}
             </div>
-            {navigation.state === "loading" ? <AdminLoader /> : modalActive ? <AddEventForm onSuccess={async () => {
-                const eventsList = await getEvents();
-                setEventsList(eventsList);
-                setModalActive(false);
-            }} /> : eventsListComponent}
+            {navigation.state === "loading" ? <AdminLoader /> : modalActive ? <AddEventForm
+                key={editingEvent?.event_id ?? 'new'}
+                event={editingEvent}
+                onCancel={editingEvent ? () => { setModalActive(false); setEditingEvent(null); } : undefined}
+                onSuccess={async () => {
+                    const eventsList = await getEvents();
+                    setEventsList(eventsList);
+                    setModalActive(false);
+                    setEditingEvent(null);
+                }}
+            /> : eventsListComponent}
         </>
     )
 };

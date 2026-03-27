@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
-import { addEvent } from "apis/backend";
+import { addEvent, updateEvent, addSlot, deleteSlot } from "apis/backend";
 import styles from "./styles.module.css";
 import classnames from "classnames";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -9,6 +9,8 @@ import partnerIds from "generated/partners.json";
 
 type TAddEventFormProps = {
   onSuccess?: () => void,
+  onCancel?: () => void,
+  event?: any | null,
 }
 
 type Inputs = {
@@ -25,19 +27,64 @@ type Inputs = {
 }
 
 type TSlots = {
+  slot_id?: number,
   start_time: string,
   amount: string,
+  available_users?: number | null,
 }
 
-export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
+function parseEventDefaults(event: any): { defaults: Partial<Inputs>, slots: TSlots[] } {
+  const firstSlot = event.slots?.[0];
+  let date = "";
+  if (firstSlot?.start_time) {
+    const d = new Date(firstSlot.start_time);
+    date = d.toISOString().slice(0, 10);
+  }
+
+  const slots: TSlots[] = (event.slots || []).map((s: any) => {
+    const d = new Date(s.start_time);
+    const hh = String(d.getUTCHours()).padStart(2, "0");
+    const mm = String(d.getUTCMinutes()).padStart(2, "0");
+    return {
+      slot_id: s.slot_id,
+      start_time: `${hh}:${mm}`,
+      amount: String(s.amount),
+      available_users: s.available_users,
+    };
+  });
+
+  return {
+    defaults: {
+      title: event.title || "",
+      summary: event.summary || "",
+      description: event.description || "",
+      location: event.location || "",
+      age: event.age || "",
+      duration: event.duration || "",
+      date,
+      id_partner: event.id_partner || "",
+      is_children: event.is_children || false,
+    },
+    slots,
+  };
+}
+
+export const AddEventForm = ({ onSuccess, onCancel, event }: TAddEventFormProps) => {
+  const isEditMode = !!event;
+  const parsed = isEditMode ? parseEventDefaults(event) : null;
+
   const {
     register,
     handleSubmit,
     reset,
-  } = useForm<Inputs>();
+  } = useForm<Inputs>({
+    defaultValues: parsed?.defaults || {},
+  });
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [slots, setSlots] = useState<TSlots[]>([]);
+  const [slots, setSlots] = useState<TSlots[]>(parsed?.slots || []);
+  const [removedSlots, setRemovedSlots] = useState<TSlots[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const handleRegister = async (form: any) => {
     if (!form.slots || form.slots.length === 0) {
@@ -54,6 +101,54 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
       return;
     }
 
+    handleError(result);
+  };
+
+  const handleUpdate = async (form: any) => {
+    setSaving(true);
+    setErrorMessage(null);
+
+    try {
+      const eventResult = await updateEvent({
+        event_id: event.event_id,
+        description: form.description,
+        summary: form.summary,
+        title: form.title,
+        location: form.location,
+        age: form.age,
+        duration: form.duration,
+        id_partner: form.id_partner,
+        is_children: form.is_children,
+      });
+
+      if (!eventResult.ok) {
+        handleError(eventResult);
+        return;
+      }
+
+      const slotsToDelete = removedSlots.filter(s => s.slot_id);
+      const slotsToAdd = slots.filter(s => !s.slot_id);
+
+      const promises = [
+        ...slotsToDelete.map(s => deleteSlot(s.slot_id)),
+        ...slotsToAdd.map(s => addSlot({
+          event_id: event.event_id,
+          start_time: `${form.date}T${s.start_time}:00Z`,
+          amount: parseInt(s.amount),
+        })),
+      ];
+
+      await Promise.all(promises);
+      alert("Мероприятие обновлено");
+      onSuccess?.();
+    } catch (e) {
+      setErrorMessage("Произошла ошибка при сохранении");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleError = (result: any) => {
     if (result.status === 422) {
       const detail = result.body?.detail;
       const errorMessages: Record<string, string> = {
@@ -88,12 +183,16 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
       return;
     }
 
-    setErrorMessage("Произошла ошибка при добавлении");
+    setErrorMessage("Произошла ошибка при сохранении");
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     data.slots = slots;
-    handleRegister(data);
+    if (isEditMode) {
+      handleUpdate(data);
+    } else {
+      handleRegister(data);
+    }
   };
 
   const handleAddSlot = (slot: TSlots) => {
@@ -101,7 +200,17 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
   };
 
   const handleRemoveSlot = (index: number) => {
+    const slot = slots[index];
+    if (isEditMode && slot.slot_id) {
+      setRemovedSlots(prev => [...prev, slot]);
+    }
     setSlots(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRestoreSlot = (index: number) => {
+    const slot = removedSlots[index];
+    setRemovedSlots(prev => prev.filter((_, i) => i !== index));
+    setSlots(prev => [...prev, slot]);
   };
 
   return (
@@ -152,9 +261,13 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
           </div>
           <div className={styles.table}>
             {slots.map((slot, index) => {
-              return <div className={styles.row} key={index}>
+              return <div className={styles.row} key={slot.slot_id ?? `new-${index}`}>
                 <span>{slot.start_time}</span>
-                <span>{slot.amount}</span>
+                <span>
+                  {slot.available_users != null
+                    ? `${slot.available_users}/${slot.amount}`
+                    : slot.amount}
+                </span>
                 <button
                   type="button"
                   className={styles.deleteSlotButton}
@@ -164,6 +277,31 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
+                </button>
+              </div>
+            })}
+          </div>
+        </div>}
+        {removedSlots.length > 0 && <div className={styles.tableWrapper}>
+          <div className={classnames(styles.row, styles.titles, styles.removedTitle)}>
+            <h3>Удалённые слоты</h3>
+          </div>
+          <div className={styles.table}>
+            {removedSlots.map((slot, index) => {
+              return <div className={classnames(styles.row, styles.removedRow)} key={slot.slot_id}>
+                <span className={styles.removedText}>{slot.start_time}</span>
+                <span className={styles.removedText}>
+                  {slot.available_users != null
+                    ? `${slot.available_users}/${slot.amount}`
+                    : slot.amount}
+                </span>
+                <button
+                  type="button"
+                  className={styles.restoreSlotButton}
+                  onClick={() => handleRestoreSlot(index)}
+                  title="Вернуть слот"
+                >
+                  ↩
                 </button>
               </div>
             })}
@@ -200,13 +338,26 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
           <></>
         )
       }
-      <Button
-        variant="outline-primary"
-        type="submit"
-        className={styles.saveButton}
-      >
-        Добавить мероприятие
-      </Button>
+      <div className={styles.formButtons}>
+        {isEditMode && onCancel && (
+          <Button
+            variant="outline-secondary"
+            type="button"
+            className={styles.saveButton}
+            onClick={onCancel}
+          >
+            Отмена
+          </Button>
+        )}
+        <Button
+          variant="outline-primary"
+          type="submit"
+          className={styles.saveButton}
+          disabled={saving}
+        >
+          {isEditMode ? "Сохранить изменения" : "Добавить мероприятие"}
+        </Button>
+      </div>
     </form >
   );
 };

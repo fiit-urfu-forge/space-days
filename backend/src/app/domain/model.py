@@ -130,6 +130,7 @@ class EventRequest(BaseModel):
     age: str | None = None
     duration: str | None = None
     id_partner: str
+    is_children: bool = False
     slots: list[SlotRequest]
 
 

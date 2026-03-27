@@ -196,3 +196,40 @@
   width: 100%;
   font-size: 20px;
 }
+
+.removedTitle {
+  background-color: #fef2f2;
+}
+
+.removedRow {
+  opacity: 0.5;
+}
+
+.removedText {
+  text-decoration: line-through;
+}
+
+.restoreSlotButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: #5E7FD6;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.restoreSlotButton:hover {
+  background-color: #f0f4ff;
+}
+
+.formButtons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}

@@ -184,7 +184,7 @@ export async function getUsers() {
             return null;
         }
     } else {
-        return delay(1000).then(() => samplePartners);
+        return delay(1000).then(() => []);
     }
 }
 
@@ -307,6 +307,95 @@ export async function loadEvents(file, force = false) {
             ok: true,
             status: 200,
             body: sampleTicket
+        }));
+    }
+}
+
+export async function updateEvent(event) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/events/`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(event),
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: {}
+        }));
+    }
+}
+
+export async function addSlot(slot) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/slots/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(slot),
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: {}
+        }));
+    }
+}
+
+export async function deleteSlot(slotId) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/slots/?slot_id=${slotId}`, {
+            method: "DELETE",
+        });
+
+        if (response.ok || response.status === 409 || response.status === 422) {
+            return {
+                ok: response.ok,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                status: response.status
+            };
+        }
+    } else {
+        return delay(1000).then(() => ({
+            ok: true,
+            status: 200,
+            body: {}
         }));
     }
 }

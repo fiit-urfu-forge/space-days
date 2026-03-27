@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { addEvent } from "apis/backend";
 import styles from "./styles.module.css";
 import classnames from "classnames";
-import { getPartners } from "apis/backend";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AddSlotForm } from "./add-slot";
-import { BASE_URL } from "../../../../constants";
+import partnerIds from "generated/partners.json";
 
 type TAddEventFormProps = {
   onSuccess?: () => void,
@@ -39,16 +38,6 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [slots, setSlots] = useState<TSlots[]>([]);
-
-  const [partnersList, setpartnersList] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const partnersList = await getPartners();
-      setpartnersList(partnersList);
-    }
-
-    fetchData();
-  }, []);
 
   const handleRegister = async (form: any) => {
     if (!form.slots || form.slots.length === 0) {
@@ -183,14 +172,17 @@ export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
         <AddSlotForm onAdd={handleAddSlot} />
       </div>
       <div className={styles.formBlock}><h3>Партнёр</h3>
-        <div className={styles.partners}>{partnersList.map((partner: {
-          partner_id: string,
-          name: string,
-          link: string,
-        }) => {
-          return <label key={partner.partner_id}>
-            <input type="radio" value={partner.partner_id} hidden className={styles.radioImg} {...register("id_partner")} />
-            <img src={`${BASE_URL}/image/partners/${partner.partner_id}.png`} alt={partner.name} />
+        <div className={styles.partners}>{partnerIds.map((id: string) => {
+          let imgSrc;
+          try {
+            imgSrc = require(`shared/image/partners/${id}.png`);
+          } catch {
+            imgSrc = require(`shared/image/partners/default.png`);
+          }
+          return <label key={id} className={styles.partnerLabel}>
+            <input type="radio" value={id} hidden className={styles.radioImg} {...register("id_partner")} />
+            <img src={imgSrc} alt={id} />
+            <span className={styles.partnerId}>{id}</span>
           </label>
         })}
         </div>

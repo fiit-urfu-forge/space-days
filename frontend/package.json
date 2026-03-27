@@ -32,9 +32,13 @@
     }
   },
   "scripts": {
+    "generate-partners": "node scripts/generate-partners.js",
+    "prestart": "npm run generate-partners",
     "start": "react-app-rewired start",
     "build": "echo \"Please use build:staging or build:production \" && exit 1",
+    "prebuild:staging": "npm run generate-partners",
     "build:staging": "dotenv -e .env.staging react-scripts build",
+    "prebuild:production": "npm run generate-partners",
     "build:production": "dotenv -e .env.production react-scripts build",
     "deploy": "echo \"Please use deploy:staging or deploy:production \" && exit 1",
     "deploy:staging": "npm run build:staging && ./update_frontend_staging.sh",

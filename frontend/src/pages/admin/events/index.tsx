@@ -25,13 +25,17 @@ export const AdminEventsPage = () => {
     const [file, setFile] = useState();
     const [modalActive, setModalActive] = useState(false);
     const [loadModalActive, setLoadModalActive] = useState(false);
-    const [eventsList, setEventsList] = useState(useLoaderData());
+    const loaderData = useLoaderData();
+    const [eventsList, setEventsList] = useState(loaderData);
     const [editingEvent, setEditingEvent] = useState(null);
+    const [loading, setLoading] = useState(!loaderData);
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             const eventsList = await getEvents();
             setEventsList(eventsList);
+            setLoading(false);
         }
 
         fetchData();
@@ -105,7 +109,7 @@ export const AdminEventsPage = () => {
                 onClick={e => e.target.value = null} />
             <div className={styles.pageButtons}>
                 <span className={!modalActive ? classnames(styles.allEventsButton, styles.activeWindow) : styles.allEventsButton} onClick={() => { setModalActive(false); setEditingEvent(null); }}>Все мероприятия</span>
-                <span className={modalActive ? classnames(styles.editEventButton, styles.activeWindow) : styles.editEventButton} >{editingEvent ? `Редактирование: ${editingEvent.title}` : 'Редактор'}</span>
+                <span className={modalActive ? classnames(styles.editEventButton, styles.activeWindow) : styles.editEventButton} >{editingEvent ? `Редактирование: ${editingEvent.title}` : 'Новое мероприятие'}</span>
                 {!modalActive && <div className={styles.actionButtons}>
                     <Button
                         className={classnames("outline-primary", styles.addButton)}
@@ -128,7 +132,7 @@ export const AdminEventsPage = () => {
                     </Button>
                 </div>}
             </div>
-            {navigation.state === "loading" ? <AdminLoader /> : modalActive ? <AddEventForm
+            {(navigation.state === "loading" || loading) ? <AdminLoader /> : modalActive ? <AddEventForm
                 key={editingEvent?.event_id ?? 'new'}
                 event={editingEvent}
                 onCancel={editingEvent ? () => { setModalActive(false); setEditingEvent(null); } : undefined}

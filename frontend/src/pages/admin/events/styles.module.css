@@ -34,7 +34,7 @@
     display: grid;
     position: relative;
     background-color: white;
-    grid-template-columns: 150px 280px 260px 440px 220px auto;
+    grid-template-columns: 150px 280px 260px 440px 220px auto 220px;
     gap: 15px;
 }
 
@@ -82,6 +82,26 @@
     /* цвет плашки */
     border-radius: 10px;
     /* закругления плашки */
+}
+
+.slots {
+    overflow-y: auto;
+    scrollbar-color: #81848D;
+    scrollbar-width: thin;
+    margin-block: 10px;
+    margin-inline-start: 15px;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: nowrap;
+}
+
+.slots::-webkit-scrollbar {
+    width: 5px;
+}
+
+.slots::-webkit-scrollbar-thumb {
+    background-color: #81848D;
+    border-radius: 10px;
 }
 
 .buttons {

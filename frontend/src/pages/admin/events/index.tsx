@@ -36,17 +36,12 @@ export const AdminEventsPage = () => {
     }, []);
 
     const handleDelete = async (element_id) => {
+        if (!window.confirm('Удалить мероприятие?')) return;
         const result = await deleteEvent(element_id);
         if (result.ok) {
-
-            const fetchData = async () => {
-                const eventsList = await getEvents();
-                setEventsList(eventsList);
-            }
-
-            fetchData();
-            ;
-        };
+            const eventsList = await getEvents();
+            setEventsList(eventsList);
+        }
     };
 
     const eventsListComponent = <div className={styles.table}>
@@ -57,6 +52,7 @@ export const AdminEventsPage = () => {
             <h3>Полное описание</h3>
             <h3>Возраст</h3>
             <h3>Продол-ть</h3>
+            <h3>Слоты</h3>
         </div>
         {eventsList && eventsList.map(event => {
             let imgSrc;
@@ -74,6 +70,14 @@ export const AdminEventsPage = () => {
                     <span className={styles.description}>{event.description}</span>
                     <span>{event.age}</span>
                     <span>{event.duration}</span>
+                    <div className={styles.slots}>
+                        {event.slots && event.slots.map(slot => {
+                            const d = new Date(slot.start_time);
+                            const date = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+                            const time = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                            return <div key={slot.slot_id}>{date} {time} — {slot.available_users ?? '?'}/{slot.amount}</div>;
+                        })}
+                    </div>
                     <div className={styles.buttons}>
                         <DeleteButton element_id={event.event_id} updateList={setEventsList} list={eventsList} deleteHandle={handleDelete} />
                     </div>

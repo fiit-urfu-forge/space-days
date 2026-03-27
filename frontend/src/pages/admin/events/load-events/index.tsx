@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { loadEvents } from "apis/backend";
 import styles from "./styles.module.css";
@@ -8,13 +8,29 @@ type TLoadEventsModalProps = {
   eventsFile: any,
   active: boolean,
   setActive: any,
+  onSuccess?: () => void,
 }
 
-export const LoadEventsModal = ({ eventsFile, active, setActive }: TLoadEventsModalProps) => {
-  const handleLoad = async (eventsFile: any) => {
-    const result = await loadEvents(eventsFile);
-  };
+export const LoadEventsModal = ({ eventsFile, active, setActive, onSuccess }: TLoadEventsModalProps) => {
+  const [loading, setLoading] = useState(false);
 
+  const handleLoad = async () => {
+    setLoading(true);
+    try {
+      const result = await loadEvents(eventsFile);
+      if (result.ok) {
+        alert("Файл успешно загружен");
+        setActive(false);
+        onSuccess?.();
+      } else {
+        alert("Ошибка при загрузке файла");
+      }
+    } catch {
+      alert("Ошибка при загрузке файла");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (<div className={active ? classnames(styles.formWrapper, styles.active) : styles.formWrapper}>
     <div className={styles.form}>
@@ -26,6 +42,7 @@ export const LoadEventsModal = ({ eventsFile, active, setActive }: TLoadEventsMo
           type="button"
           className={classnames(styles.button)}
           variant="outline-secondary"
+          disabled={loading}
           onClick={() => {
             setActive(false)
           }}
@@ -33,14 +50,12 @@ export const LoadEventsModal = ({ eventsFile, active, setActive }: TLoadEventsMo
           Отмена
         </Button>
         <Button
-          onClick={() => {
-            handleLoad(eventsFile);
-            setActive(false);
-          }}
+          onClick={handleLoad}
           className={classnames(styles.button)}
           variant="primary"
+          disabled={loading}
         >
-          Загрузить
+          {loading ? "Загрузка..." : "Загрузить"}
         </Button>
       </div>
     </div>

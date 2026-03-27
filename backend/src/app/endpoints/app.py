@@ -435,6 +435,8 @@ def add_user(request: Request, user_request: model.UserRequest, response: Respon
 @router.post('/api/event')
 def save_event(request: Request, body: model.EventJson):
     logger.info("run")
+    if not body.slots:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Event must have at least one slot")
     repository: Repository = request.app.repository
     count_event = repository.get_count_table("events") + 2
     count_slots = repository.get_count_table("slots")
@@ -443,7 +445,12 @@ def save_event(request: Request, body: model.EventJson):
     slots = []
     for slot_id, slot in enumerate(body.slots):
         slots.append(model.Slot(slot_id=count_slots + slot_id, event_id=count_event, **slot.dict()))
-    repository.save_events([event], slots)
+    try:
+        repository.save_events([event], slots)
+    except Exception as e:
+        logger.error(f"Failed to save event: {e}", exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save event")
+    return {"event_id": count_event}
 
 
 @router.post('/api/tickets/my')

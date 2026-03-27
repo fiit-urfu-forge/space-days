@@ -430,7 +430,7 @@ export async function addEvent(form, force = false) {
             id_partner: form.id_partner,
             is_children: form.is_children,
             slots: form.slots.map((it) => ({
-                start_time: `${form.date}T${it.start_time}:00+00:00`,
+                start_time: `${form.date}T${it.start_time}:00Z`,
                 amount: it.amount,
             })),
             force_registration: force,

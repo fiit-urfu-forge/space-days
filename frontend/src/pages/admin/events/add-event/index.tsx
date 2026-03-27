@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
-import SlotsForm from "components/SlotsForm";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { addEvent } from "apis/backend";
 import styles from "./styles.module.css";
@@ -10,7 +9,7 @@ import { AddSlotForm } from "./add-slot";
 import { BASE_URL } from "../../../../constants";
 
 type TAddEventFormProps = {
-  event?: any,
+  onSuccess?: () => void,
 }
 
 type Inputs = {
@@ -31,28 +30,15 @@ type TSlots = {
   amount: string,
 }
 
-export const AddEventForm = ({ event }: TAddEventFormProps) => {
+export const AddEventForm = ({ onSuccess }: TAddEventFormProps) => {
   const {
     register,
     handleSubmit,
-    getValues,
-    setValue,
-    watch,
     reset,
   } = useForm<Inputs>();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [slots, setSlots] = useState<TSlots[] | null>([{
-    start_time: "aaa",
-    amount: "11",
-  }, {
-    start_time: "11111",
-    amount: "asda"
-  },
-  {
-    start_time: "11111",
-    amount: "asda"
-  },]);
+  const [slots, setSlots] = useState<TSlots[]>([]);
 
   const [partnersList, setpartnersList] = useState([]);
   useEffect(() => {
@@ -65,27 +51,69 @@ export const AddEventForm = ({ event }: TAddEventFormProps) => {
   }, []);
 
   const handleRegister = async (form: any) => {
+    if (!form.slots || form.slots.length === 0) {
+      setErrorMessage("Необходимо добавить хотя бы один слот");
+      return;
+    }
     const result = await addEvent(form);
     if (result.ok) {
       alert("Событие добавлено");
-      setErrorMessage("Событие успешно добавлено");
+      setErrorMessage(null);
+      reset();
+      setSlots([]);
+      onSuccess?.();
       return;
     }
 
     if (result.status === 422) {
-      setErrorMessage("Ошибка в заполнении формы");
+      const detail = result.body?.detail;
+      const errorMessages: Record<string, string> = {
+        "Event must have at least one slot": "Необходимо добавить хотя бы один слот",
+      };
+      if (typeof detail === "string") {
+        setErrorMessage(errorMessages[detail] || detail);
+        return;
+      }
+      if (Array.isArray(detail)) {
+        const fieldNames: Record<string, string> = {
+          title: "Название",
+          summary: "Краткое описание",
+          description: "Полное описание",
+          location: "Место проведения",
+          age: "Возраст",
+          duration: "Продолжительность",
+          id_partner: "Партнёр",
+          is_children: "Можно взрослым",
+          slots: "Слоты",
+          start_time: "Время начала",
+          amount: "Кол-во мест",
+        };
+        const fields = detail.map((err: any) => {
+          const loc = err.loc?.filter((l: any) => l !== "body") ?? [];
+          return loc.map((l: string) => fieldNames[l] || l).join(" → ");
+        });
+        setErrorMessage(`Ошибка в полях: ${fields.join(", ")}`);
+      } else {
+        setErrorMessage("Ошибка в заполнении формы");
+      }
       return;
     }
 
-    setErrorMessage(null);
+    setErrorMessage("Произошла ошибка при добавлении");
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
+    data.slots = slots;
     handleRegister(data);
   };
-  console.log(watch("id_partner"))
 
+  const handleAddSlot = (slot: TSlots) => {
+    setSlots(prev => [...prev, slot]);
+  };
 
+  const handleRemoveSlot = (index: number) => {
+    setSlots(prev => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.addEventForm}>
@@ -122,9 +150,37 @@ export const AddEventForm = ({ event }: TAddEventFormProps) => {
           </label>
           <label className={styles.input}>
             Можно взрослым
-            <input type="checkbox" className={classnames(styles.inputArea, styles.checkbox)} {...register("is_children", { required: true })} />
+            <input type="checkbox" className={classnames(styles.inputArea, styles.checkbox)} {...register("is_children")} />
           </label>
         </div>
+      </div>
+      <div className={classnames(styles.formBlock, styles.slotsBlock)}>
+        <h3>Слоты</h3>
+        {slots.length > 0 && <div className={styles.tableWrapper}>
+          <div className={classnames(styles.row, styles.titles)}>
+            <h3>Время начала</h3>
+            <h3>Кол-во мест</h3>
+          </div>
+          <div className={styles.table}>
+            {slots.map((slot, index) => {
+              return <div className={styles.row} key={index}>
+                <span>{slot.start_time}</span>
+                <span>{slot.amount}</span>
+                <button
+                  type="button"
+                  className={styles.deleteSlotButton}
+                  onClick={() => handleRemoveSlot(index)}
+                  title="Удалить слот"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            })}
+          </div>
+        </div>}
+        <AddSlotForm onAdd={handleAddSlot} />
       </div>
       <div className={styles.formBlock}><h3>Партнёр</h3>
         <div className={styles.partners}>{partnersList.map((partner: {
@@ -132,37 +188,12 @@ export const AddEventForm = ({ event }: TAddEventFormProps) => {
           name: string,
           link: string,
         }) => {
-          return <label >
+          return <label key={partner.partner_id}>
             <input type="radio" value={partner.partner_id} hidden className={styles.radioImg} {...register("id_partner")} />
             <img src={`${BASE_URL}/image/partners/${partner.partner_id}.png`} alt={partner.name} />
           </label>
         })}
         </div>
-      </div>
-      <div className={classnames(styles.formBlock, styles.slotsBlock)}>
-        <h3>Слоты</h3>
-        {slots && <div className={styles.tableWrapper}>
-          <div className={classnames(styles.row, styles.titles)}>
-            <h3>Дата</h3>
-            <h3>Время начала</h3>
-            <h3>Кол-во мест</h3>
-          </div>
-          <div className={styles.table}>
-            {slots?.map(slot => {
-              console.log(slot, "ddd")
-              return <div className={styles.row} key={slot.amount}>
-                <span>lfnf</span>
-                <span>{slot.start_time}</span>
-                <span>{slot.amount}</span>
-                <div className={styles.buttons}>
-
-                </div>
-              </div>
-            })}
-          </div>
-
-        </div>}
-        <AddSlotForm />
       </div>
 
       {
@@ -181,9 +212,8 @@ export const AddEventForm = ({ event }: TAddEventFormProps) => {
         variant="outline-primary"
         type="submit"
         className={styles.saveButton}
-        onClick={handleRegister}
       >
-        Добавить
+        Добавить мероприятие
       </Button>
     </form >
   );

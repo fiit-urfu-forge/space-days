@@ -171,6 +171,10 @@ npm run deploy:staging
 - `.env` и `.env.staging` указывают на одну и ту же БД — local и staging делят данные
 - Нет механизма подавления писем в коде (нет dry-run, DEBUG-флага), но на практике письма отправляются только в production, т.к. только там запущен mailer
 
+## UI/UX Guidelines
+
+- **Инлайн-формы:** Для добавления элементов в списки/таблицы использовать компактную строку (инпуты + кнопка в одну линию) вместо модальных форм с отдельной кнопкой "Отмена"
+
 ## Important Conventions
 
 - **Phone normalization:** Russian phone numbers are normalized to 10 digits (strips +7/8 prefix)

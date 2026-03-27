@@ -1,10 +1,9 @@
 .addEventForm {
-  display: grid;
-  grid-template-columns: 1000px auto;
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 30px;
-  position: relative;
   width: 100%;
+  max-width: 1000px;
 }
 
 .formBlock {
@@ -19,10 +18,7 @@
 }
 
 .saveButton {
-  position: absolute;
-  top: -70px;
-  right: 0;
-  margin-block-end: 55px;
+  align-self: center;
   font-size: 13px;
   padding: 15px 30px;
   border-width: 2px;
@@ -112,27 +108,43 @@
     outline: #81848d 2px solid;
 }
 
-.table {
-  display: grid;
-  grid-auto-rows: 110px;
-  overflow: hidden;
-  border-top: none;
-  height: 244px;
+.tableWrapper {
   width: 515px;
-  overflow-y: scroll;
 }
 
-.buttons {
-  position: absolute;
+.table {
+  display: grid;
+  border-top: none;
+  max-height: 244px;
+  overflow-y: auto;
 }
 
 .row {
   display: grid;
-  position: relative;
   background-color: white;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 32px;
+  align-items: center;
   border: 1px solid #DADADA;
   border-top: none;
+}
+
+.deleteSlotButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: #b0b0b0;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.deleteSlotButton:hover {
+  color: #dc3545;
+  background-color: #fef2f2;
 }
 
 .row:last-child {
@@ -141,15 +153,11 @@
 
 .row > span {
   padding-inline-start: 15px;
-  padding-block-start: 15px;
-  
+  padding-block: 10px;
 }
 
 
 .titles {
-  width: 500px;
-  display: flex;
-  align-items: center;
   background-color: #F8FAFF;
   height: 45px;
   border-radius: 7px 7px 0 0;
@@ -157,19 +165,16 @@
 }
 
 .titles > h3 {
-  display: flex;
-  width: calc(100% / 3);
-  align-items: center;
   font-size: 11px;
   font-weight: 600;
-  margin-inline-start: 15px;
+  padding-inline-start: 15px;
   margin-block-end: 0;
 }
 
 .slotsBlock {
   display: flex;
-  gap: 0 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .slotsBlock > h3 {

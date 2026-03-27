@@ -33,7 +33,7 @@ export const AdminEventsPage = () => {
         }
 
         fetchData();
-    }, [loadModalActive]);
+    }, []);
 
     const handleDelete = async (element_id) => {
         const result = await deleteEvent(element_id);
@@ -85,7 +85,10 @@ export const AdminEventsPage = () => {
         <>
             <h1>Мероприятия</h1>
             <hr className={styles.hr} />
-            {loadModalActive && <LoadEventsModal eventsFile={file} active={loadModalActive} setActive={setLoadModalActive} />}
+            {loadModalActive && <LoadEventsModal eventsFile={file} active={loadModalActive} setActive={setLoadModalActive} onSuccess={async () => {
+                const eventsList = await getEvents();
+                setEventsList(eventsList);
+            }} />}
             <input type="file" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ref={inputRef} hidden
                 onChange={e => {
                     setFile(e.target.files[0]);
@@ -115,7 +118,11 @@ export const AdminEventsPage = () => {
                 <span className={!modalActive ? classnames(styles.allEventsButton, styles.activeWindow) : styles.allEventsButton} onClick={() => { setModalActive(false) }}>Все мероприятия</span>
                 <span className={modalActive ? classnames(styles.editEventButton, styles.activeWindow) : styles.editEventButton} >Редактор</span>
             </div>
-            {navigation.state === "loading" ? <AdminLoader /> : modalActive ? <AddEventForm /> : eventsListComponent}
+            {navigation.state === "loading" ? <AdminLoader /> : modalActive ? <AddEventForm onSuccess={async () => {
+                const eventsList = await getEvents();
+                setEventsList(eventsList);
+                setModalActive(false);
+            }} /> : eventsListComponent}
         </>
     )
 };

@@ -37,9 +37,9 @@
     "start": "react-app-rewired start",
     "build": "echo \"Please use build:staging or build:production \" && exit 1",
     "prebuild:staging": "npm run generate-partners",
-    "build:staging": "dotenv -e .env.staging react-scripts build",
+    "build:staging": "sh -c 'set -a && . ./.env.staging && set +a && NODE_OPTIONS=--max-old-space-size=4096 react-scripts build'",
     "prebuild:production": "npm run generate-partners",
-    "build:production": "dotenv -e .env.production react-scripts build",
+    "build:production": "sh -c 'set -a && . ./.env.production && set +a && NODE_OPTIONS=--max-old-space-size=4096 react-scripts build'",
     "deploy": "echo \"Please use deploy:staging or deploy:production \" && exit 1",
     "deploy:staging": "npm run build:staging && ./update_frontend_staging.sh",
     "deploy:stagingaws": "npm run build:staging && ./update_frontend_staging_aws.sh",
@@ -75,7 +75,6 @@
     "@types/react-router": "^5.1.20",
     "@types/react-router-bootstrap": "^0.26.6",
     "@types/react-router-dom": "^5.3.3",
-    "dotenv-cli": "^7.1.0",
     "react-hook-form": "^7.51.1",
     "vitest": "^0.34.5"
   }

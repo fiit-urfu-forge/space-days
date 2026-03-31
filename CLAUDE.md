@@ -150,6 +150,30 @@ npm run deploy:staging
 
 Скрипт backend собирает Docker-образ, пушит в Container Registry и деплоит новую ревизию Serverless Container. Скрипт frontend собирает React-приложение с `.env.staging` и загружает build в S3 бакет.
 
+## Деплой на Production
+
+Production деплой аналогичен staging — те же предварительные требования и настройка окружения (см. выше).
+
+Скрипты читают переменные из `.env.production` (backend и frontend соответственно). Необходимые переменные:
+- **Backend** (в `backend/.env.production`): `SPACE_DAYS_REGISTRY`, `SPACE_DAYS_BACKEND_CONTAINER_ID`, `ENDPOINT`, `DB`, `SERVICE_ACCOUNT_ID`
+- **Frontend** (в `frontend/.env.production`): `SPACE_DAYS_APP_BUCKET`, `REACT_APP_API_BASE_URL`
+
+### Деплой
+
+```bash
+# Backend
+cd backend
+./update_backend_production.sh
+
+# Frontend
+cd frontend
+npm run deploy:production
+```
+
+Скрипт backend собирает Docker-образ с тегом `production`, пушит в Container Registry и деплоит новую ревизию Serverless Container. Скрипт frontend собирает React-приложение с `.env.production` и загружает build в S3 бакет.
+
+**Важно:** В production также работает mailer (`main_mailer.py`), который отправляет реальные письма — см. секцию Email System ниже.
+
 ## Email System (Notisend)
 
 Письма отправляются через pull-based очередь, а не синхронно из API.

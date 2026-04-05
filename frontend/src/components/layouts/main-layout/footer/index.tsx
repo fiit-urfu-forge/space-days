@@ -13,22 +13,14 @@ export const Footer = () => (
             <p className={classnames(styles.bold, styles.gray)}>
                 Мы в социальных сетях:{" "}
                 <span>
-                    <a href="https://t.me/+BGVoanm9OLxjNzRi" className={styles.imgLink}>
-                        <Image src={tgIcon} alt="telegram" />
-                    </a>
                     <a href="https://vk.com/dnikosmosa2023" className={styles.imgLink}>
                         <Image src={vkIcon} alt="vkontakte" />
                     </a>
                 </span>
             </p>
-            <p className={styles.bot}>
-                <a href="#" className={styles.bold}>
-                    Телеграм-бот для проверки билетов
-                </a>
-            </p>
             <p>
                 По всем вопросам можете писать в{" "}
-                <a href="https://t.me/dni_kosmosa">телеграм-поддержку</a>
+                <a href="https://vk.com/dnikosmosa2023">группу</a>
             </p>
         </Col>
         <Col xs={12} className={styles.footerCol}>

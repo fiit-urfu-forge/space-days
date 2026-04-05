@@ -4,7 +4,7 @@ import Image from "react-bootstrap/Image";
 function PartnerCarousel() {
   return (
     <Marquee pauseOnHover={true} speed={60} gradient={false}>
-      <a href="https://zsfond.ru">
+      {/* <a href="https://zsfond.ru">
         <Image
           src={require("shared/image/partners/zolotoesechenie.png")}
           alt='Фонд "Золотое сечение"'
@@ -21,14 +21,14 @@ function PartnerCarousel() {
           src={require("shared/image/partners/soundcity.png")}
           alt='Школа музыки "Sound city"'
         ></Image>
-      </a>
+      </a> */}
       <a href="https://fiit-urfu.ru/">
         <Image
           src={require("shared/image/partners/fiit.png")}
           alt="IT-направление ФИИТ в УрФУ"
         ></Image>
       </a>
-      <a href="https://smartschoolekb.ru">
+      {/* <a href="https://smartschoolekb.ru">
         <Image
           src={require("shared/image/partners/smartschool.png")}
           alt="Современная частная школа СМАРТ"
@@ -51,7 +51,7 @@ function PartnerCarousel() {
           src={require("shared/image/partners/odarennost.png")}
           alt='Дворец творчества "Одарённость и технологии"'
         ></Image>
-      </a>
+      </a> */}
       <a href="https://www.npoa.ru">
         <Image src={require("shared/image/partners/npo.png")} alt="НПО автоматики "></Image>
       </a>
@@ -61,13 +61,13 @@ function PartnerCarousel() {
           alt="Уральский государственный военно-исторический музей"
         ></Image>
       </a>
-      <a href="http://молодежь.екатеринбург.рф">
+      <a href="https://молодежь.екатеринбург.рф/">
         <Image
           src={require("shared/image/partners/molodeznayapolicy.png")}
           alt="Управление молодёжной политики администрации города Екатеринбурга"
         ></Image>
       </a>
-      <a href="https://lotsman.ru">
+      {/* <a href="https://lotsman.ru">
         <Image
           src={require("shared/image/partners/locman.png")}
           alt='Детская общественная организация "Лоцман"'
@@ -78,14 +78,14 @@ function PartnerCarousel() {
           src={require("shared/image/partners/l52.png")}
           alt="Л52 - Музей истории Екатеринбурга"
         ></Image>
-      </a>
+      </a> */}
       <a href="https://kantrskrip.ru">
         <Image
           src={require("shared/image/partners/kantrscrip.png")}
           alt="Школа астрономии"
         ></Image>
       </a>
-      <a href="https://igronaftik.ru">
+      {/* <a href="https://igronaftik.ru">
         <Image
           src={require("shared/image/partners/igronaphtic.png")}
           alt='Мастерская игр "Игронафтик"'
@@ -96,7 +96,7 @@ function PartnerCarousel() {
           src={require("shared/image/partners/icae.png")}
           alt="Информационные центры по атомной энергии"
         ></Image>
-      </a>
+      </a> */}
       <a href="https://ит-школа.рф/index.html">
         <Image
           src={require("shared/image/partners/homecomputer.png")}
@@ -109,7 +109,25 @@ function PartnerCarousel() {
           alt="ФОНД ПОДДЕРЖКИ ИНИЦИАТИВ В СФЕРЕ ДОПОЛНИТЕЛЬНОГО ОБРАЗОВАНИЯ"
         ></Image>
       </a>
-      <a href="https://englishdrive.ru">
+      <a href="https://www.inter-study.ru">
+        <Image
+          src={require("shared/image/partners/interstudy.png")}
+          alt="Международный центр Интерстади"
+        ></Image>
+      </a>
+      <a href="https://www.talisman-online.ru">
+        <Image
+          src={require("shared/image/partners/talisman.png")}
+          alt="Языковая Академия Талисман"
+        ></Image>
+      </a>
+      <a href="https://www.newtonparki.ru">
+        <Image
+          src={require("shared/image/partners/newtonpark.png")}
+          alt="Newton park - парк научных развлечений"
+        ></Image>
+      </a>
+      {/* <a href="https://englishdrive.ru">
         <Image
           src={require("shared/image/partners/englishdrive.png")}
           alt='Языковой лагерь "English drive"'
@@ -129,7 +147,7 @@ function PartnerCarousel() {
           src={require("shared/image/partners/centeritcube.png")}
           alt="ЦЕНТРЫ ЦИФРОВОГО ОБРАЗОВАНИЯ ДЕТЕЙ «IT-КУБ»"
         ></Image>
-      </a>
+      </a>*/}
       <a href="http://book.uraic.ru">
         <Image
           src={require("shared/image/partners/bibliotekabelinskogo.png")}
@@ -142,7 +160,7 @@ function PartnerCarousel() {
           alt='Библиотечный центр "Екатеринбург"'
         ></Image>
       </a>
-      <a href="https://екатеринбург.рф">
+      {/* <a href="https://екатеринбург.рф">
         <Image
           src={require("shared/image/partners/administration.png")}
           alt="Администрация Екатеринбурга"
@@ -162,7 +180,7 @@ function PartnerCarousel() {
           src={require("shared/image/partners/pripev.png")}
           alt='Школа вокала "Припев"'
         ></Image>
-      </a>
+      </a> */}
     </Marquee>
   );
 }

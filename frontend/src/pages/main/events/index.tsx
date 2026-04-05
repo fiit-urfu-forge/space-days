@@ -21,13 +21,7 @@ const STATUS_LOADED = 1;
 
 
 const dayMap = {
-  12: { header: "День Открытия Фестиваля", subheader: "12 апреля, воскресенье", hours: [10, 11, 12, 13, 14, 15, 16] },
-  13: { header: "13 апреля, понедельник" },
-  14: { header: "14 апреля, вторник" },
-  15: { header: "15 апреля, среда" },
-  16: { header: "16 апреля, четверг" },
-  17: { header: "17 апреля, пятница" },
-  18: { header: "18 апреля, суббота", presents: true },
+  12: { header: "День Открытия Фестиваля", subheader: "12 апреля, воскресенье", hours: [11, 12, 13, 14, 15] }
 };
 Object.entries(dayMap).forEach(([k, v]) => { v.date = new Date(COSMONAUTICS_DAY.getFullYear(), COSMONAUTICS_DAY.getMonth(), Number(k)); });
 

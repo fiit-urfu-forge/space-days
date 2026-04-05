@@ -29,6 +29,9 @@ const partnersLinks = {
   babyklub:
     "https://baby-club.ru/clubs/ekaterinburg/academic/?utm_source=yandex&utm_medium=map&utm_campaign=ad_mart",
   pripev: "https://vk.com/pripev_akadem",
+  interstudy: "https://www.inter-study.ru",
+  talisman: "https://www.talisman-online.ru",
+  newtonpark: "https://www.newtonparki.ru"
 };
 
 export default partnersLinks;

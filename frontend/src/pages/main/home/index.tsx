@@ -55,10 +55,10 @@ export const HomePage = () => {
           </LinkContainer>
         </Col>
       </Row>
-      <Row className="about justify-content-center align-items-center" md={4}>
+      {/* <Row className="about justify-content-center align-items-center" md={4}>
         <InfoList info={info} />
-      </Row>
-      <Row className="present justify-content-center">
+      </Row> */}
+      {/* <Row className="present justify-content-center">
         <Col className="d-flex justify-content-center align-items-center">
           <Image fluid rounded src={require("shared/image/present.png")} />
         </Col>
@@ -83,10 +83,10 @@ export const HomePage = () => {
             </li>
           </ul>
         </Col>
-      </Row>
+      </Row> */}
       <Row className="map justify-content-between">
         <h2>Этапы мероприятия</h2>
-        <Col className="map__steps" md={12} lg={3}>
+        <Col className="map__steps" md={12} lg={5}>
           <span>01</span>
           <Image fluid src={require("shared/image/planet_1.png")} />
           <h3>Расписание</h3>
@@ -94,13 +94,13 @@ export const HomePage = () => {
             Перейдите на страницу с расписанием мероприятий
           </p>
         </Col>
-        <Col className="map__steps" md={12} lg={3}>
+        <Col className="map__steps" md={12} lg={5}>
           <span>02</span>
           <Image fluid src={require("shared/image/planet_2.png")} />
           <h3>Регистрация</h3>
           <p>Запишитесь на нужный день и время</p>
         </Col>
-        <Col className="map__steps" md={12} lg={3}>
+        {/* <Col className="map__steps" md={12} lg={3}>
           <span>03</span>
           <Image fluid src={require("shared/image/planet_4.png")} />
           <h3>Мероприятия и призы</h3>
@@ -108,7 +108,7 @@ export const HomePage = () => {
             Посетите мероприятия и получите фишки за участие.<br></br>Так у вас
             будет больше шансов выиграть призы
           </p>
-        </Col>
+        </Col> */}
       </Row>
       <Row className="archive justify-content-center">
         <h2>Предыдущие мероприятия</h2>

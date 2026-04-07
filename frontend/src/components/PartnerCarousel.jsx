@@ -67,6 +67,12 @@ function PartnerCarousel() {
           alt="Управление молодёжной политики администрации города Екатеринбурга"
         ></Image>
       </a>
+      <a href="https://glavniy.com/">
+        <Image
+          src={require("shared/image/partners/glavniy.png")}
+          alt="Гастромолл Главный"
+        ></Image>
+      </a>
       {/* <a href="https://lotsman.ru">
         <Image
           src={require("shared/image/partners/locman.png")}

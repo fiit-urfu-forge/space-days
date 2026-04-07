@@ -122,6 +122,10 @@
   max-width: 250px;
 }
 
+.glavniy a:nth-child(2) {
+  max-width: 250px;
+}
+
 .banner {
   padding: 60px;
   justify-content: space-between;
@@ -331,7 +335,7 @@ a.hidden {
 }
 
 .partners img {
-  width: 160px;
+  width: 200px;
   height: 160px;
   margin-right: 50px;
   object-fit: contain;
@@ -1309,6 +1313,7 @@ input[type="radio"] {
 
   .school a:first-child,
   .hochu-v-nauku a:first-child,
+  .glavniy a:first-child,
   .molodeznaya a:first-child {
     height: 45px;
   }

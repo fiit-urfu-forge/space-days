@@ -46,6 +46,10 @@
     max-width: 250px;
 }
 
+.glavniy a:nth-child(2) {
+    max-width: 250px;
+}
+
 .buttonToTickets {
     display: flex;
     flex-direction: column;
@@ -84,6 +88,7 @@
     }
 
     .school a:first-child,
+    .glavniy a:first-child,
     .hochuVNauku a:first-child,
     .molodeznaya a:first-child {
         height: 45px;
@@ -112,6 +117,7 @@
     }
 
     .school a:last-child,
+    .glavniy a:last-child,
     .hochuVNauku a:last-child {
         font-size: 10px;
     }
@@ -135,6 +141,7 @@
     }
 
     .school a:last-child,
+    .glavniy a:last-child,
     .hochuVNauku a:last-child {
         font-size: 8px;
     }

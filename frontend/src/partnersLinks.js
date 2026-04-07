@@ -31,7 +31,8 @@ const partnersLinks = {
   pripev: "https://vk.com/pripev_akadem",
   interstudy: "https://www.inter-study.ru",
   talisman: "https://www.talisman-online.ru",
-  newtonpark: "https://www.newtonparki.ru"
+  newtonpark: "https://www.newtonparki.ru",
+  glavniy: "https://glavniy.com"
 };
 
 export default partnersLinks;

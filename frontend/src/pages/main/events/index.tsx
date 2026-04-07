@@ -173,6 +173,10 @@ function renderPresentCard() {
 }
 
 function renderDayMenu(day) {
+  if (Object.keys(dayMap).length < 2){
+    return null
+  }
+
   const days = Object.keys(dayMap).map(Number);
   const result = days.map((it, index) => {
     const className = `date-button rounded-pill ${it === day ? "date-button_checked" : ""

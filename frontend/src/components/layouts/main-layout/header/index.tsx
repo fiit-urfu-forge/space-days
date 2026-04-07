@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import hochuIcon from 'shared/image/partners/hochuvnauku-simple.png'
 import molodezhIcon from "shared/image/partners/molodeznayapolicy-simple.png"
+import glavniyIcon from "shared/image/partners/glavniy-simple.png"
 import styles from "./styles.module.css"
 import "commonStyles.css"
 
@@ -27,13 +28,21 @@ export const Header = () => (
       <a href="https://vnauku.ru/">хочу&nbsp;в&nbsp;науку</a>
     </Col>
     <div className={classnames(styles.verticalHr, styles.second)}></div>
-    <Col className={classnames(styles.molodeznaya, styles.headerCol)}>
-      <a href="http://kantrskrip.ru/?utm_source=website&amp;utm_medium=header&amp;utm_campaign=logo">
+    {/* <Col className={classnames(styles.molodeznaya, styles.headerCol)}>
+      <a href="http://молодежь.екатеринбург.рф">
         <Image src={molodezhIcon}></Image>
       </a>
       <a href="http://молодежь.екатеринбург.рф">
         Управление&nbsp;молодёжной&nbsp;политики
         администрации&nbsp;города&nbsp;Екатеринбурга
+      </a>
+    </Col> */}
+    <Col className={classnames(styles.glavniy, styles.headerCol)}>
+      <a href="https://glavniy.com/">
+        <Image width={120} src={glavniyIcon}></Image>
+      </a>
+      <a href="https://glavniy.com/">
+        Гастромолл&nbsp;Главный
       </a>
     </Col>
     <Col className={classnames(styles.buttonToTickets, styles.headerCol)}>

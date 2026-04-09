@@ -27,7 +27,7 @@ export const HomePage = () => {
             При поддержке Управления молодежной политики администрации города
             Екатеринбурга
           </p>
-          <p>Фестиваль бесплатных космических событий</p>
+          <p>Фестиваль бесплатных космических событий в{"\u00A0"}гастромолле{"\u00A0"}<a href="https://glavniy.com/" target="_blank" rel="noopener noreferrer">Главный</a></p>
           <LinkContainer to="/events">
             <Button
               variant="outline-primary"
@@ -84,7 +84,7 @@ export const HomePage = () => {
           </ul>
         </Col>
       </Row> */}
-      <Row className="map justify-content-between">
+      {/* <Row className="map justify-content-between">
         <h2>Этапы мероприятия</h2>
         <Col className="map__steps" md={12} lg={5}>
           <span>01</span>
@@ -100,7 +100,7 @@ export const HomePage = () => {
           <h3>Регистрация</h3>
           <p>Запишитесь на нужный день и время</p>
         </Col>
-        {/* <Col className="map__steps" md={12} lg={3}>
+        <Col className="map__steps" md={12} lg={3}>
           <span>03</span>
           <Image fluid src={require("shared/image/planet_4.png")} />
           <h3>Мероприятия и призы</h3>
@@ -108,8 +108,8 @@ export const HomePage = () => {
             Посетите мероприятия и получите фишки за участие.<br></br>Так у вас
             будет больше шансов выиграть призы
           </p>
-        </Col> */}
-      </Row>
+        </Col>
+      </Row> */}
       <Row className="archive justify-content-center">
         <h2>Предыдущие мероприятия</h2>
         <Carousel year="2023" />

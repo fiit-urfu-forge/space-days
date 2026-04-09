@@ -13,14 +13,14 @@ export const Footer = () => (
             <p className={classnames(styles.bold, styles.gray)}>
                 Мы в социальных сетях:{" "}
                 <span>
-                    <a href="https://vk.com/dnikosmosa2023" className={styles.imgLink}>
+                    <a href="https://vk.com/dnikosmosa2026" className={styles.imgLink}>
                         <Image src={vkIcon} alt="vkontakte" />
                     </a>
                 </span>
             </p>
             <p>
                 По всем вопросам можете писать в{" "}
-                <a href="https://vk.com/dnikosmosa2023">группу</a>
+                <a href="https://vk.com/dnikosmosa2026">группу</a>
             </p>
         </Col>
         <Col xs={12} className={styles.footerCol}>

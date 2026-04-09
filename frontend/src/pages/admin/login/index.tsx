@@ -8,11 +8,14 @@ export const LogInPage = () => {
 
     useEffect(() => {
         window.YaAuthSuggest.init({
-            client_id: '66680f0be8644a6c8e560993fc0caff7',
-            response_type: 'token',
-            redirect_uri: 'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/token/'
+            //client_id: '66680f0be8644a6c8e560993fc0caff7',
+            //redirect_uri: 'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/token/',
+            client_id: '55e1507cd32e41febc85575068325032',
+            redirect_uri: 'https://dnikosmosa-ekb.ru/#/token/',
+            response_type: 'token'
         },
-            'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/admin'
+            //'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/admin'
+            'https://dnikosmosa-ekb.ru/#/admin'
         )
             .then((result) => result.handler())
             .then(async (data) => {

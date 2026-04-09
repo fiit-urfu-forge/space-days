@@ -4,7 +4,8 @@ import "commonStyles.css"
 export const LogInSuppPage = () => {
     const ffn = function () {
         window.YaSendSuggestToken(
-            'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/admin',
+            //'https://d5d01gtvhjuka0q70t5r.apigw.yandexcloud.net/#/admin',
+            'https://dnikosmosa-ekb.ru/#/admin',
             {
                 flag: true
             }

@@ -167,7 +167,7 @@ export const AddEventForm = ({ onSuccess, onCancel, event }: TAddEventFormProps)
           age: "Возраст",
           duration: "Продолжительность",
           id_partner: "Партнёр",
-          is_children: "Можно взрослым",
+          is_children: "Только для детей",
           slots: "Слоты",
           start_time: "Время начала",
           amount: "Кол-во мест",
@@ -247,7 +247,7 @@ export const AddEventForm = ({ onSuccess, onCancel, event }: TAddEventFormProps)
             <input type="date" className={styles.inputArea} {...register("date", { required: true })} />
           </label>
           <label className={styles.input}>
-            Можно взрослым
+            Только для детей
             <input type="checkbox" className={classnames(styles.inputArea, styles.checkbox)} {...register("is_children")} />
           </label>
         </div>

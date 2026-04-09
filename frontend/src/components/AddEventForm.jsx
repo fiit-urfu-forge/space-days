@@ -35,7 +35,7 @@ const AddEventForm = (partnerId) => {
       duration: "",
       date: "",
       id_partner: partnerId,
-      is_children: true,
+      is_children: false,
       slots: [
         {
           start_time: "",
@@ -142,7 +142,7 @@ const AddEventForm = (partnerId) => {
         <Form.Check
           type="checkbox"
           className="mb-3"
-          label="Можно взрослым"
+          label="Только для детей"
           checked={form.is_children}
           onChange={(event) =>
             handleFormChange({ ...form, is_children: event.target.checked })

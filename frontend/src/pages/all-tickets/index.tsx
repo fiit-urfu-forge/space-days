@@ -5,11 +5,17 @@ import { padTime, formatTicketId } from "core";
 import Loader from "components/Loader";
 import styles from "./styles.module.css";
 
+const LS_KEY = "all_tickets_access_key";
+
 export const AllTicketsPage = () => {
   const [events, setEvents] = useState([]);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [accessKey, setAccessKey] = useState(() => localStorage.getItem(LS_KEY) || "");
+  const [authorized, setAuthorized] = useState(false);
+  const [keyInput, setKeyInput] = useState("");
+  const [keyError, setKeyError] = useState(null);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -19,12 +25,19 @@ export const AllTicketsPage = () => {
     return () => { document.head.removeChild(meta); };
   }, []);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (key) => {
     setLoading(true);
     setError(null);
-    const result = await getAllTickets();
+    const result = await getAllTickets(key);
     if (result.ok) {
       setEvents(result.body);
+      setAuthorized(true);
+      setAccessKey(key);
+      localStorage.setItem(LS_KEY, key);
+    } else if (result.status === 403) {
+      localStorage.removeItem(LS_KEY);
+      setAccessKey("");
+      setAuthorized(false);
     } else {
       setError("Не удалось загрузить данные");
     }
@@ -32,8 +45,12 @@ export const AllTicketsPage = () => {
   }, []);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (accessKey) {
+      loadData(accessKey);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const handleToggleIsCome = useCallback(
     async (ticketId, currentIsCome) => {
@@ -54,7 +71,7 @@ export const AllTicketsPage = () => {
         }))
       );
 
-      const result = await checkTicket(ticketId, newIsCome);
+      const result = await checkTicket(ticketId, newIsCome, accessKey);
       if (!result.ok) {
         // Rollback
         setEvents((prev) =>
@@ -73,8 +90,26 @@ export const AllTicketsPage = () => {
         alert("Не удалось обновить статус билета");
       }
     },
-    []
+    [accessKey]
   );
+
+  const handleKeySubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setKeyError(null);
+    setLoading(true);
+    const result = await getAllTickets(keyInput);
+    if (result.ok) {
+      setEvents(result.body);
+      setAuthorized(true);
+      setAccessKey(keyInput);
+      localStorage.setItem(LS_KEY, keyInput);
+    } else if (result.status === 403) {
+      setKeyError("Неверный ключ");
+    } else {
+      setKeyError("Ошибка соединения");
+    }
+    setLoading(false);
+  }, [keyInput]);
 
   if (loading) {
     return (
@@ -94,6 +129,30 @@ export const AllTicketsPage = () => {
           <button className={styles.retryButton} onClick={loadData}>
             Повторить
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.keyFormWrap}>
+          <form className={styles.keyForm} onSubmit={handleKeySubmit}>
+            <p className={styles.keyFormTitle}>Введите ключ доступа</p>
+            <input
+              className={styles.keyInput}
+              type="text"
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              placeholder="Ключевое слово"
+              autoFocus
+            />
+            {keyError && <p className={styles.keyError}>{keyError}</p>}
+            <button className={styles.keyButton} type="submit" disabled={!keyInput.trim()}>
+              Войти
+            </button>
+          </form>
         </div>
       </div>
     );

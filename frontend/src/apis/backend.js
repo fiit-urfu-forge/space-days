@@ -498,12 +498,13 @@ export async function subscribeEvent(slotId, form, force = false) {
     }
 }
 
-export async function getAllTickets() {
+export async function getAllTickets(accessKey) {
     if (API_BASE_URL) {
         const response = await fetch(`${API_BASE_URL}/tickets/all`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                "X-Access-Key": accessKey || "",
             },
         });
 
@@ -524,12 +525,13 @@ export async function getAllTickets() {
     return { ok: false, status: 0 };
 }
 
-export async function checkTicket(ticketId, isCome) {
+export async function checkTicket(ticketId, isCome, accessKey) {
     if (API_BASE_URL) {
         const response = await fetch(`${API_BASE_URL}/tickets/check`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                "X-Access-Key": accessKey || "",
             },
             body: JSON.stringify({
                 ticket_id: ticketId,

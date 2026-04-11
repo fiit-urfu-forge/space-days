@@ -9,7 +9,7 @@ import pytz
 
 import pandas as pd
 
-from fastapi import FastAPI, APIRouter, HTTPException, Query, Response, status, Request, UploadFile, File
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Query, Response, status, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ import uvicorn
 from datetime import datetime
 
 
-from ..config import YDB_DATABASE
+from ..config import YDB_DATABASE, ALL_TICKETS_KEY
 from ..adapters.repository import Repository
 from ..core import str_from_date
 from ..domain import model
@@ -478,7 +478,9 @@ ORDER BY event_id, start_time, ticket_id
 
 
 @router.get('/api/tickets/all', response_model=list[model.AllEventWithTickets])
-def get_all_tickets(request: Request):
+def get_all_tickets(request: Request, x_access_key: str = Header(None)):
+    if not ALL_TICKETS_KEY or x_access_key != ALL_TICKETS_KEY:
+        raise HTTPException(status_code=403, detail="Invalid access key")
     repository: Repository = request.app.repository
     rows = repository.execute(GET_ALL_TICKETS_QUERY.format(YDB_DATABASE), {})[0].rows
 
@@ -538,7 +540,9 @@ def get_all_tickets(request: Request):
 
 
 @router.put('/api/tickets/check')
-def check_ticket(request: Request, body: model.CheckTicketRequest):
+def check_ticket(request: Request, body: model.CheckTicketRequest, x_access_key: str = Header(None)):
+    if not ALL_TICKETS_KEY or x_access_key != ALL_TICKETS_KEY:
+        raise HTTPException(status_code=403, detail="Invalid access key")
     repository: Repository = request.app.repository
     repository.execute("""PRAGMA TablePathPrefix("{}");
     UPDATE tickets SET is_come = {} WHERE ticket_id = {}

@@ -498,6 +498,53 @@ export async function subscribeEvent(slotId, form, force = false) {
     }
 }
 
+export async function getAllTickets() {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/tickets/all`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.ok) {
+            return {
+                ok: true,
+                status: response.status,
+                body: await response.json()
+            };
+        } else {
+            console.log("HTTP error: " + response.status);
+            return {
+                ok: false,
+                status: response.status
+            };
+        }
+    }
+    return { ok: false, status: 0 };
+}
+
+export async function checkTicket(ticketId, isCome) {
+    if (API_BASE_URL) {
+        const response = await fetch(`${API_BASE_URL}/tickets/check`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                ticket_id: ticketId,
+                is_come: isCome,
+            }),
+        });
+
+        return {
+            ok: response.ok,
+            status: response.status,
+        };
+    }
+    return { ok: false, status: 0 };
+}
+
 function delay(ms) {
     return new Promise((resolve, reject) => {
         setTimeout(resolve, ms);

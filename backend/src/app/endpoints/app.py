@@ -452,6 +452,99 @@ def save_event(request: Request, body: model.EventJson):
     return {"event_id": count_event}
 
 
+GET_ALL_TICKETS_QUERY = """PRAGMA TablePathPrefix("{}");
+SELECT
+    slots.slot_id AS slot_id,
+    tickets.ticket_id AS ticket_id,
+    SOME(events.event_id) AS event_id,
+    SOME(events.title) AS title,
+    SOME(events.location) AS location,
+    SOME(slots.start_time) AS start_time,
+    SOME(slots.amount) AS amount,
+    SOME(tickets.amount) AS ticket_amount,
+    SOME(tickets.is_come) AS is_come,
+    SOME(users.first_name) AS first_name,
+    SOME(users.last_name) AS last_name,
+    SOME(users.phone) AS phone,
+    COUNT(childs.child_id) AS children_count
+FROM slots
+INNER JOIN events ON events.event_id = slots.event_id
+LEFT JOIN tickets ON tickets.slot_id = slots.slot_id
+LEFT JOIN users ON users.user_id = tickets.user_id
+LEFT JOIN childs ON childs.user_id = tickets.user_id AND childs.slot_id = tickets.slot_id
+GROUP BY slots.slot_id, tickets.ticket_id
+ORDER BY event_id, start_time, ticket_id
+"""
+
+
+@router.get('/api/tickets/all', response_model=list[model.AllEventWithTickets])
+def get_all_tickets(request: Request):
+    repository: Repository = request.app.repository
+    rows = repository.execute(GET_ALL_TICKETS_QUERY.format(YDB_DATABASE), {})[0].rows
+
+    events_dict = {}
+    slots_dict = {}
+
+    for row in rows:
+        event_id = row.event_id
+        slot_id = row.slot_id
+
+        if event_id not in events_dict:
+            events_dict[event_id] = {
+                "event_id": event_id,
+                "title": row.title,
+                "location": row.location,
+                "slot_ids": [],
+            }
+
+        if slot_id not in slots_dict:
+            slots_dict[slot_id] = {
+                "slot_id": slot_id,
+                "event_id": event_id,
+                "start_time": datetime.utcfromtimestamp(row.start_time).replace(tzinfo=pytz.utc),
+                "amount": row.amount,
+                "tickets": [],
+            }
+            events_dict[event_id]["slot_ids"].append(slot_id)
+
+        if row.ticket_id is not None:
+            children_count = row.children_count or 0
+            ticket_amount = row.ticket_amount or 1
+            slots_dict[slot_id]["tickets"].append(model.AllTicketInfo(
+                ticket_id=row.ticket_id,
+                first_name=row.first_name or "",
+                last_name=row.last_name or "",
+                phone=row.phone or "",
+                adults=ticket_amount - children_count,
+                children=children_count,
+                is_come=bool(row.is_come),
+            ))
+
+    result = []
+    for event_data in events_dict.values():
+        slots = [
+            model.AllSlotWithTickets(**{k: v for k, v in slots_dict[sid].items() if k != "event_id"})
+            for sid in event_data["slot_ids"]
+        ]
+        slots.sort(key=lambda s: s.start_time)
+        result.append(model.AllEventWithTickets(
+            event_id=event_data["event_id"],
+            title=event_data["title"],
+            location=event_data["location"],
+            slots=slots,
+        ))
+    result.sort(key=lambda e: e.event_id)
+    return result
+
+
+@router.put('/api/tickets/check')
+def check_ticket(request: Request, body: model.CheckTicketRequest):
+    repository: Repository = request.app.repository
+    repository.execute("""PRAGMA TablePathPrefix("{}");
+    UPDATE tickets SET is_come = {} WHERE ticket_id = {}
+    """.format(YDB_DATABASE, str(body.is_come).lower(), body.ticket_id), {})
+
+
 @router.post('/api/tickets/my')
 def get_user_events(request: Request, response: Response, body: model.TicketRequest):
     repository: Repository = request.app.repository

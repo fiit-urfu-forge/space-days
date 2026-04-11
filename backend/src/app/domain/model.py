@@ -204,3 +204,32 @@ class InfoEvent(BaseModel):
     start_time: datetime
     title: str
     is_come: bool | None
+
+
+class AllTicketInfo(BaseModel):
+    ticket_id: int
+    first_name: str
+    last_name: str
+    phone: str
+    adults: int
+    children: int
+    is_come: bool
+
+
+class AllSlotWithTickets(BaseModel):
+    slot_id: int
+    start_time: datetime
+    amount: int
+    tickets: list[AllTicketInfo]
+
+
+class AllEventWithTickets(BaseModel):
+    event_id: int
+    title: str
+    location: str
+    slots: list[AllSlotWithTickets]
+
+
+class CheckTicketRequest(BaseModel):
+    ticket_id: int
+    is_come: bool

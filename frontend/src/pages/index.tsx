@@ -7,6 +7,7 @@ import { AdminEventsPage } from "./admin/events";
 import { RegistrationPage } from "./main/registration";
 import { TicketsPage } from "./main/tickets";
 import { NotFound } from "components/not-found";
+import { AllTicketsPage } from "./all-tickets";
 import { AdminLayout } from "components/layouts/admin-layout";
 import { LogInPage } from "./admin/login";
 import { LogInSuppPage } from "./admin/login/support";
@@ -16,6 +17,10 @@ import { eventsLoader } from "./admin/events";
 
 const routesConfig = [
   { path: "*", element: <NotFound /> },
+  {
+    path: "/all-tickets",
+    element: <AllTicketsPage />,
+  },
   {
     path: "/admin/",
     element: <LogInPage />,

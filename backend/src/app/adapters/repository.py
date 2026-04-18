@@ -310,13 +310,23 @@ class Repository:
         DELETE FROM slots;""".format(YDB_DATABASE), {})
 
     def get_data(self) -> list[model.InfoEvent]:
-        events = self.execute("""PRAGMA TablePathPrefix("{}");
+        query = """PRAGMA TablePathPrefix("{}");
         SELECT DISTINCT email, users.first_name as f_name, last_name as l_name, phone, childs.first_name as name, childs.age as age, slots.start_time as start_time, events.title as title, is_come FROM users
-        LEFT JOIN childs ON childs.user_id = users.user_id 
+        LEFT JOIN childs ON childs.user_id = users.user_id
         INNER JOIN tickets ON users.user_id = tickets.user_id
         INNER JOIN slots ON slots.slot_id = tickets.slot_id
         INNER JOIN events ON slots.event_id = events.event_id
-        ORDER BY f_name;""".format(YDB_DATABASE), {})[0].rows
+        ORDER BY f_name;""".format(YDB_DATABASE)
+
+        logger.info(query)
+        events = []
+        it = self.driver.table_client.scan_query(query)
+        while True:
+            try:
+                result = next(it)
+                events.extend(result.result_set.rows)
+            except StopIteration:
+                break
         data = list()
         for event in events:
             data.append(model.InfoEvent(

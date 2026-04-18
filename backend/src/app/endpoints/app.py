@@ -589,11 +589,15 @@ def create_events(request: Request, file: UploadFile = File(...)):
 def get_all_events(request: Request):
     repository: Repository = request.app.repository
     data = repository.get_data()
-    df = pd.DataFrame([info.model_dump() for info in data])
-    dic = {"email": "Email", "f_name": "Имя", "l_name": "Фамилия", "phone": "Телефон",
-           "name": "Имя ребенка", "age": "Возраст ребенка", "start_time": "Время начала мероприятия",
-           "title": "Название мероприятия", "is_come": "Билет проверен"}
-    df['start_time'] = df['start_time'].dt.tz_localize(None)
+    columns = ["email", "l_name", "f_name", "phone", "name", "age", "title", "start_time", "is_come"]
+    dic = {"email": "Email", "l_name": "Фамилия", "f_name": "Имя", "phone": "Телефон",
+           "name": "Имя ребенка", "age": "Возраст ребенка", "title": "Название мероприятия",
+           "start_time": "Время начала мероприятия", "is_come": "Билет проверен"}
+    if data:
+        df = pd.DataFrame([info.model_dump() for info in data])[columns]
+        df['start_time'] = pd.to_datetime(df['start_time'], utc=True).dt.tz_localize(None)
+    else:
+        df = pd.DataFrame(columns=columns)
     df.rename(columns=dic, inplace=True)
 
     with pd.ExcelWriter('tbl.xlsx', engine='xlsxwriter') as wb:
